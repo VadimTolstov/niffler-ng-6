@@ -14,4 +14,5 @@ public record CategoryJson(
     @JsonProperty("archived")
     boolean archived) {
 
+
 }
