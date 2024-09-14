@@ -27,8 +27,7 @@ public class ProfilePage {
         SelenideElement category = $x(String.format("//*[text()='%s']", categoryName));
         if (archived) {
             category.$x("../..//button[@aria-label='Unarchive category']").shouldHave(Condition.visible);
-        }
-        else {
+        } else {
             category.$x("../../..//button[@aria-label='Edit category']").shouldHave(Condition.visible);
             category.$x("../..//button[@aria-label='Archive category']").shouldHave(Condition.visible);
 
