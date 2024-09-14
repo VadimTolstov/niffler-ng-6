@@ -47,7 +47,7 @@ public class RegisterPage {
     }
 
     public RegisterPage shouldErrorMessage(String value) {
-        $x("//span[contains(text(),'" + value + "')]")
+        $x(String.format("//span[contains(text(),'%s')]", value))
                 .shouldHave(Condition.visible)
                 .shouldHave(Condition.text(value));
         return this;

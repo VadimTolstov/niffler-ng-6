@@ -23,7 +23,9 @@ public class MainPage {
             selectCurrency = $("#currency"),
             buttonDelete = $("#delete"),
             buttonNext = $("#page-next"),
-            buttonPrevious = $("#page-prev");
+            buttonPrevious = $("#page-prev"),
+            personIcon = $("svg[data-testid='PersonIcon']"),
+            openProfilePage = $("a[href='/profile']");
 
     public EditSpendingPage editSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription)).$$("td").get(5).click();
@@ -37,5 +39,15 @@ public class MainPage {
     public MainPage checkingHeader() {
         header.shouldHave(visible, text(HEADER));
         return this;
+    }
+
+    public MainPage clickPersonIcon() {
+        personIcon.click();
+        return this;
+    }
+
+    public ProfilePage openProfilePage() {
+        openProfilePage.click();
+        return new ProfilePage();
     }
 }
