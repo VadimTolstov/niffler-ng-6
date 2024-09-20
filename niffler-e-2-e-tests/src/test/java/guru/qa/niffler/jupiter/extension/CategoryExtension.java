@@ -51,9 +51,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                     category.username(),
                     true
             );
-            context.getStore(NAMESPACE).put(
-                    context.getUniqueId(),
-                    spendApiClient.updateCategory(updateCategory));
+                    spendApiClient.updateCategory(updateCategory);
         }
     }
 

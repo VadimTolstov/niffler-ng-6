@@ -30,9 +30,9 @@ public class UsersQueueExtension implements
 
     static {
         EMPTY_USERS.add(new StaticUser("bee", "12345", null, null, null));
-        WITH_FRIEND_USERS.add(new StaticUser("duck", "12345", "dima", null, null));
-        WITH_INCOME_REQUEST_USERS.add(new StaticUser("dima", "12345", null, "bee", null));
-        WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("barsik", "12345", null, null, "bill"));
+        WITH_FRIEND_USERS.add(new StaticUser("duck", "12345", "books", null, null));
+        WITH_INCOME_REQUEST_USERS.add(new StaticUser("dima", "12345", null, "barsik", null));
+        WITH_OUTCOME_REQUEST_USERS.add(new StaticUser("barsik", "12345", null, null, "dima"));
     }
 
     @Target(ElementType.PARAMETER)
@@ -41,9 +41,8 @@ public class UsersQueueExtension implements
         Type value() default Type.EMPTY;
     }
 
-    p
 
-    enum Type {
+    public enum Type {
         EMPTY, WITH_FRIEND, WITH_INCOME_REQUEST, WITH_OUTCOME_REQUEST
     }
 
@@ -51,7 +50,7 @@ public class UsersQueueExtension implements
     @Override
     public void beforeTestExecution(ExtensionContext context) {
         Arrays.stream(context.getRequiredTestMethod().getParameters())
-                .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class) )//&& p.getType().isAssignableFrom(StaticUser.class))
+                .filter(p -> AnnotationSupport.isAnnotated(p, UserType.class) && p.getType().isAssignableFrom(StaticUser.class))
                 .map(type -> type.getAnnotation(UserType.class))
                 .forEach(ut -> {
                     Optional<StaticUser> user = Optional.empty();
@@ -85,6 +84,7 @@ public class UsersQueueExtension implements
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public void afterTestExecution(ExtensionContext context) {
         Map<UserType, StaticUser> map = context.getStore(NAMESPACE).get(
                 context.getUniqueId(),
@@ -105,6 +105,7 @@ public class UsersQueueExtension implements
 
     @Override
     public StaticUser resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
-        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), StaticUser.class);
+        return (StaticUser) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), Map.class)
+                .get(AnnotationSupport.findAnnotation(parameterContext.getParameter(), UserType.class).get());
     }
 }

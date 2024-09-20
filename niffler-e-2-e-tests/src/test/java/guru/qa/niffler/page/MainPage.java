@@ -24,7 +24,8 @@ public class MainPage {
             buttonNext = $("#page-next"),
             buttonPrevious = $("#page-prev"),
             personIcon = $("svg[data-testid='PersonIcon']"),
-            openProfilePage = $("a[href='/profile']");
+            openProfilePage = $("a[href='/profile']"),
+            openFriendPage = $("a[href='/people/friends']");
 
     public EditSpendingPage editSpending(String spendingDescription) {
         tableRows.find(text(spendingDescription)).$$("td").get(5).click();
@@ -48,5 +49,10 @@ public class MainPage {
     public ProfilePage openProfilePage() {
         openProfilePage.click();
         return new ProfilePage();
+    }
+
+    public FriendsPage openFriendPage() {
+        openFriendPage.click();
+        return new FriendsPage();
     }
 }
