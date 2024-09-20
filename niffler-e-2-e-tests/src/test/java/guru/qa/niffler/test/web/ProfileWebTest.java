@@ -21,7 +21,7 @@ public class ProfileWebTest {
     @Test
     void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("books", "12345")
+                .login(category.username(), "12345")
                 .clickPersonIcon()
                 .openProfilePage()
                 .clickShowArchivedCheckbox()
@@ -35,7 +35,7 @@ public class ProfileWebTest {
     @Test
     void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login("books", "12345")
+                .login(category.username(), "12345")
                 .clickPersonIcon()
                 .openProfilePage()
                 .checkCategoryArchived(category.archived(), category.name());
