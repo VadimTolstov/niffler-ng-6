@@ -60,6 +60,5 @@ public class FriendsWebTest {
                 .clickPersonIcon()
                 .openFriendPage()
                 .checkFriendRequests(user.outcome());
-
     }
 }

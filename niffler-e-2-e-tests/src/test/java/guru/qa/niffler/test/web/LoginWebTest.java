@@ -49,6 +49,4 @@ public class LoginWebTest {
                 .login("books", "12345")
                 .checkingHeader();
     }
-
-
 }
