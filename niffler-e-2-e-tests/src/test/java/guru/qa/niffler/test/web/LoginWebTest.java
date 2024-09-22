@@ -6,6 +6,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.jupiter.extension.BrowserExtension;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,8 +21,8 @@ public class LoginWebTest {
     @DisplayName("Авторизация пользователя с невалидными данными")
     void unsuccessfulAuthorization() {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .setUsername("f")
-                .setPassword("g")
+                .setUsername("q")
+                .setPassword("k")
                 .clickLogIn()
                 .errorMessage(ERROR_MESSAGE);
     }
