@@ -1,15 +1,14 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import com.github.javafaker.Faker;
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
+import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
-@ExtendWith(BrowserExtension.class)
+@WebTest
 public class RegistrationWebTest {
     private final static String HEADER = "Sign up";
     private final static String HEADER_LOGIN = "Log in";
@@ -18,8 +17,8 @@ public class RegistrationWebTest {
     @Test
     @DisplayName("Регистрация нового пользователя")
     void successRegistration() {
-        String name = new Faker().name().firstName();
-        String password = new Faker().code().ean8();
+        String name = RandomDataUtils.randomUsername();
+        String password = RandomDataUtils.randomPassword();
         String successRegister = "Congratulations! You've registered!";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
@@ -49,7 +48,7 @@ public class RegistrationWebTest {
     @Test
     @DisplayName("Показать значения в полях Password, Submit password")
     void openPassword() {
-        String password = new Faker().code().ean8();
+        String password = RandomDataUtils.randomPassword();
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .clickRegisterPage()
@@ -76,6 +75,7 @@ public class RegistrationWebTest {
                 .clickRegisterPage()
                 .checkTextHeader(HEADER);
     }
+
 
     @Test
     @DisplayName("Регистрация пользователя с зарегистрированным логином")
