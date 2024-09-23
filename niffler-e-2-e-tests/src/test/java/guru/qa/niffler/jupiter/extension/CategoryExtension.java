@@ -17,9 +17,13 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     public void beforeEach(ExtensionContext context) throws Exception {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Category.class)
                 .ifPresent(anno -> {
+                    String name = "";
+                    if (anno.name().isEmpty()) {
+                        name = new Faker().random().toString();
+                    }
                     CategoryJson category = new CategoryJson(
                             null,
-                            new Faker().random().toString(),
+                            name,
                             anno.username(),
                             false
                     );
@@ -43,7 +47,6 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         CategoryJson category = context.getStore(CategoryExtension.NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-//        if (!category.archived()) {
         CategoryJson updateCategory = new CategoryJson(
                 category.id(),
                 category.name(),
@@ -51,7 +54,6 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                 true
         );
         spendApiClient.updateCategory(updateCategory);
-//        }
     }
 
     @Override

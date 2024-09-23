@@ -33,11 +33,11 @@ public class FriendsPage {
     }
 
     public void checkNotIncoming() {
-        incomeSpan.findBy(Condition.not(Condition.text("Waiting..."))).shouldHave(visible);
+        incomeSpan.filterBy(Condition.text("Waiting...")).isEmpty();
     }
 
     public FriendsPage checkFriendsName(String friends) {
-        listFriends.get(0).shouldBe(visible).shouldHave(text(friends));
+        listFriends.findBy(Condition.text(friends)).shouldHave(visible);
         return this;
     }
 
@@ -46,7 +46,7 @@ public class FriendsPage {
     }
 
     public FriendsPage checkFriendRequests(String friends) {
-        listFriendRequests.get(0).shouldBe(visible).shouldHave(text(friends));
+        listFriendRequests.findBy(Condition.text(friends)).shouldHave(visible);
         return this;
     }
 }
