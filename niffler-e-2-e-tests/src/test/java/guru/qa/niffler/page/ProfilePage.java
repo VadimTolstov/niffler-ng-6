@@ -30,8 +30,6 @@ public class ProfilePage {
         } else {
             category.$x("../../..//button[@aria-label='Edit category']").shouldHave(Condition.visible);
             category.$x("../..//button[@aria-label='Archive category']").shouldHave(Condition.visible);
-
-
         }
     }
 }
