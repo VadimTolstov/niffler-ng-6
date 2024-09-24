@@ -23,7 +23,7 @@ public class FriendsWebTest {
                 .login(user.username(), user.password())
                 .clickPersonIcon()
                 .openFriendPage()
-                .checkFriendsName(user.friend());
+                .checkFriendName(user.friend());
 
     }
 

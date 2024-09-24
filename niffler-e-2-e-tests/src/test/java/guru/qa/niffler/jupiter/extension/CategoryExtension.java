@@ -17,10 +17,11 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     public void beforeEach(ExtensionContext context) throws Exception {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), Category.class)
                 .ifPresent(anno -> {
-                    String name = "";
-                    if (anno.name().isEmpty()) {
+                    String name = anno.name();
+                    if (name.isEmpty()) {
                         name = new Faker().random().toString();
                     }
+
                     CategoryJson category = new CategoryJson(
                             null,
                             name,

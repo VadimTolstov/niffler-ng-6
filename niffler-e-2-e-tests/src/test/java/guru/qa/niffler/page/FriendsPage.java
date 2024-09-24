@@ -6,6 +6,7 @@ import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 import org.openqa.selenium.By;
 
+import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.*;
@@ -33,11 +34,11 @@ public class FriendsPage {
     }
 
     public void checkNotIncoming() {
-        incomeSpan.filterBy(Condition.text("Waiting...")).isEmpty();
+        incomeSpan.filterBy(Condition.text("Waiting...")).should(size(0));
     }
 
-    public FriendsPage checkFriendsName(String friends) {
-        listFriends.findBy(Condition.text(friends)).shouldHave(visible);
+    public FriendsPage checkFriendName(String friend) {
+        listFriends.findBy(Condition.text(friend)).shouldHave(visible);
         return this;
     }
 
@@ -45,8 +46,8 @@ public class FriendsPage {
         allPeople.find(text(username)).shouldHave(text("Waiting..."));
     }
 
-    public FriendsPage checkFriendRequests(String friends) {
-        listFriendRequests.findBy(Condition.text(friends)).shouldHave(visible);
+    public FriendsPage checkFriendRequests(String friend) {
+        listFriendRequests.findBy(Condition.text(friend)).shouldHave(visible);
         return this;
     }
 }
