@@ -34,7 +34,6 @@ public class SpendApiClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_CREATED, response.code());
-        int i ;
         return response.body();
     }
 
