@@ -1,7 +1,7 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.config.Config;
-import guru.qa.niffler.data.Databases.*;
+import guru.qa.niffler.data.Databases.XaFunction;
 import guru.qa.niffler.data.dao.impl.AuthAuthorityDaoJdbc;
 import guru.qa.niffler.data.dao.impl.AuthUserDaoJdbc;
 import guru.qa.niffler.data.dao.impl.UserDaoJdbc;
@@ -62,5 +62,4 @@ public class UsersDbClient {
                 ),
                 null);
     }
-}
 }

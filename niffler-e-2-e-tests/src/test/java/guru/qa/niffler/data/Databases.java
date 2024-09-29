@@ -78,6 +78,10 @@ public class Databases {
         }
     }
 
+    public static <T> T xaTransaction(XaFunction<T>... actions) {
+        return xaTransaction(Connection.TRANSACTION_READ_COMMITTED, actions);
+    }
+
     public static void transaction(Consumer<Connection> consumer, String jdbcUrl, int isolationLvl) {
         Connection connection = null;
         try {
