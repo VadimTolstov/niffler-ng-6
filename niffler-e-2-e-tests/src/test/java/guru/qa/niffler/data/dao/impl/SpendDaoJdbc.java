@@ -71,7 +71,10 @@ public class SpendDaoJdbc implements SpendDao {
                         sp.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         sp.setAmount(rs.getDouble("amount"));
                         sp.setDescription(rs.getString("description"));
-                        sp.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                        CategoryEntity ce = new CategoryEntity();
+                        ce.setId(UUID.fromString(rs.getString("category_id")));
+                        sp.setCategory(ce);
+
                         return Optional.of(sp);
                     } else {
                         return Optional.empty();
@@ -102,7 +105,9 @@ public class SpendDaoJdbc implements SpendDao {
                         sp.setCurrency(CurrencyValues.valueOf(rs.getString("currency")));
                         sp.setAmount(rs.getDouble("amount"));
                         sp.setDescription(rs.getString("description"));
-                        sp.setCategory(rs.getObject("category_id", CategoryEntity.class));
+                        CategoryEntity ce = new CategoryEntity();
+                        ce.setId(UUID.fromString(rs.getString("category_id")));
+                        sp.setCategory(ce);
 
                         spendEntities.add(sp);
                     }
