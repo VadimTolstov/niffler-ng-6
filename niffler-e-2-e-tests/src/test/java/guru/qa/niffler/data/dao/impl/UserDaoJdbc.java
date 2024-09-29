@@ -16,35 +16,28 @@ public class UserDaoJdbc implements UserDao {
     }
 
     @Override
-    public UserEntity createUser(UserEntity user) {
+    public UserEntity create(UserEntity user) {
         try (PreparedStatement ps = connection.prepareStatement(
-                "INSERT INTO user(username, currency, firstname, surname, photo, photo_small, full_name) " +
-                        "VALUES (?, ?, ?, ?, ?, ?, ?)",
-                Statement.RETURN_GENERATED_KEYS
-        )) {
+                "INSERT INTO user (username, currency) VALUES (?, ?)",
+                PreparedStatement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getUsername());
-            ps.setObject(2, user.getCurrency());
-            ps.setString(3, user.getFirstname());
-            ps.setString(4, user.getSurname());
-            ps.setByte(5, user.getPhoto()[0]);
-            ps.setByte(5, user.getPhotoSmall()[0]);
-
+            ps.setString(2, user.getCurrency().name());
             ps.executeUpdate();
-
-            final UUID generatedKey;
+            final UUID generatedUserId;
             try (ResultSet rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
-                    generatedKey = rs.getObject("id", UUID.class);
+                    generatedUserId = rs.getObject("id", UUID.class);
                 } else {
-                    throw new SQLException("Can`t find id in ResultSet");
+                    throw new IllegalStateException("Can`t find id in ResultSet");
                 }
             }
-            user.setId(generatedKey);
+            user.setId(generatedUserId);
             return user;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
+
 
     @Override
     public Optional<UserEntity> findById(UUID id) {
