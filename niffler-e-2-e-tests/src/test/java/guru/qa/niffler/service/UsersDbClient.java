@@ -9,8 +9,4 @@ public class UsersDbClient {
 
     private static final Config CFG = Config.getInstance();
     private static final PasswordEncoder pe = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-
-    public UserJson createUser(UserJson user) {
-        return
-    }
 }
