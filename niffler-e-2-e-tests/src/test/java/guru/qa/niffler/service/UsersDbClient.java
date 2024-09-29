@@ -4,7 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.Databases.XaFunction;
 import guru.qa.niffler.data.dao.impl.AuthAuthorityDaoJdbc;
 import guru.qa.niffler.data.dao.impl.AuthUserDaoJdbc;
-import guru.qa.niffler.data.dao.impl.UserDaoJdbc;
+import guru.qa.niffler.data.dao.impl.UdUserDaoJdbc;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
@@ -54,7 +54,7 @@ public class UsersDbClient {
                                     ue.setUsername(user.username());
                                     ue.setFullname(user.fullname());
                                     ue.setCurrency(user.currency());
-                                    new UserDaoJdbc(con).create(ue);
+                                    new UdUserDaoJdbc(con).create(ue);
                                     return ue;
                                 },
                                 CFG.userdataJdbcUrl()
