@@ -4,7 +4,12 @@ import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.model.CurrencyValues;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -103,4 +108,33 @@ public class UdUserDaoJdbc implements UdUserDao {
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public List<UserEntity> findAll() {
+        List<UserEntity> users = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT * FROM \"user\""
+        )) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    UserEntity user = new UserEntity();
+
+                    user.setId(resultSet.getObject("id", UUID.class));
+                    user.setUsername(resultSet.getString("username"));
+                    user.setCurrency(resultSet.getObject("currency", CurrencyValues.class));
+                    user.setFirstname(resultSet.getString("firstname"));
+                    user.setSurname(resultSet.getString("surname"));
+                    user.setPhoto(resultSet.getBytes("photo"));
+                    user.setPhotoSmall(resultSet.getBytes("photo_small"));
+                    user.setFullname(resultSet.getString("full_name"));
+
+                    users.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return users;
+    }
 }
+
