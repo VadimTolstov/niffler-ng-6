@@ -4,6 +4,8 @@ import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,5 +73,32 @@ public class AuthUserDaoJdbc implements AuthUserDao {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Override
+    public List<AuthUserEntity> findAll() {
+        List<AuthUserEntity> authUsers = new ArrayList<>();
+        try (PreparedStatement statement = connection.prepareStatement(
+                "SELECT * FROM spend"
+        )) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                while (resultSet.next()) {
+                    AuthUserEntity authUser = new AuthUserEntity();
+
+                    authUser.setId(resultSet.getObject("id", UUID.class));
+                    authUser.setUsername(resultSet.getString("username"));
+                    authUser.setPassword(resultSet.getString("password"));
+                    authUser.setEnabled(resultSet.getBoolean("enabled"));
+                    authUser.setAccountNonExpired(resultSet.getBoolean("account_non_expired"));
+                    authUser.setAccountNonLocked(resultSet.getBoolean("account_non_locked"));
+                    authUser.setCredentialsNonExpired(resultSet.getBoolean("credentials_non_expired"));
+
+                    authUsers.add(authUser);
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return authUsers;
     }
 }
