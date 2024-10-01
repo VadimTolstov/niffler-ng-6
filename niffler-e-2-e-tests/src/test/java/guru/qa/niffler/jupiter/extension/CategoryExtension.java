@@ -1,10 +1,10 @@
 package guru.qa.niffler.jupiter.extension;
 
-import com.github.javafaker.Faker;
 import guru.qa.niffler.api.SpendApiClient;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.CategoryJson;
+import guru.qa.niffler.service.SpendDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -13,7 +13,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(CategoryExtension.class);
 
-    private final SpendApiClient spendApiClient = new SpendApiClient();
+    private final SpendDbClient spendDbClient = new SpendDbClient();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -25,22 +25,12 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
                                 null,
                                 RandomDataUtils.randomCategoryName(),
                                 userAnno.username(),
-                                false
+                                anno.archived()
                         );
 
-                        CategoryJson createdCategory = spendApiClient.createCategory(category);
-                        if (anno.archived()) {
-                            CategoryJson archivedCategory = new CategoryJson(
-                                    createdCategory.id(),
-                                    createdCategory.name(),
-                                    createdCategory.username(),
-                                    true
-                            );
-                            createdCategory = spendApiClient.updateCategory(archivedCategory);
-                        }
                         context.getStore(NAMESPACE).put(
                                 context.getUniqueId(),
-                                createdCategory);
+                                spendDbClient.createCategory(category));
                     }
                 });
     }
@@ -48,15 +38,7 @@ public class CategoryExtension implements BeforeEachCallback, ParameterResolver,
     @Override
     public void afterTestExecution(ExtensionContext context) throws Exception {
         CategoryJson category = context.getStore(CategoryExtension.NAMESPACE).get(context.getUniqueId(), CategoryJson.class);
-        if (category != null) {
-        CategoryJson updateCategory = new CategoryJson(
-                category.id(),
-                category.name(),
-                category.username(),
-                true
-        );
-        spendApiClient.updateCategory(updateCategory);
-        }
+        spendDbClient.deleteCategory(category);
     }
 
     @Override

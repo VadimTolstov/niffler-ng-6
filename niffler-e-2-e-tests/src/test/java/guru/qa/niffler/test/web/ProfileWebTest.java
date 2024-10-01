@@ -17,16 +17,16 @@ public class ProfileWebTest {
 
     private static final Config CFG = Config.getInstance();
 
-    @User(
+    @User(spendings = @Spending(
+            category = "Почти",
+            description = "Обучение Advanced 2.0",
+            amount = 79990
+    ),
             username = "books",
             categories = @Category(
                     archived = true
-            ),
-            spendings = @Spending(
-                    category = "Обучение",
-                    description = "Обучение Advanced 2.0",
-                    amount = 79990
             )
+
     )
     @Test
     void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
