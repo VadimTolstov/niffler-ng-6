@@ -11,7 +11,7 @@ import org.junit.platform.commons.support.AnnotationSupport;
 
 import java.util.Date;
 
-public class SpendingExtension implements BeforeEachCallback, ParameterResolver, AfterTestExecutionCallback {
+public class SpendingExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(SpendingExtension.class);
 
@@ -44,12 +44,6 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver,
                         );
                     }
                 });
-    }
-
-    @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
-        SpendJson spend = context.getStore(SpendingExtension.NAMESPACE).get(context.getUniqueId(), SpendJson.class);
-        spendDbClient.deleteSpend(spend);
     }
 
     @Override
