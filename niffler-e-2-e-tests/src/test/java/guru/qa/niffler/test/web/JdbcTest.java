@@ -39,7 +39,7 @@ public class JdbcTest {
     @Test
     void springJdbcTest() {
         UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUser(
+        UserJson user = usersDbClient.createUserSpringJdbcTransaction(
                 new UserJson(
                         null,
                         "valentin-4",
@@ -49,6 +49,82 @@ public class JdbcTest {
                         CurrencyValues.RUB,
                         null,
                         null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    @Test
+    void createUserSpringJdbcTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserSpringJdbcTransaction(
+                new UserJson(
+                        null,
+                        null,
+                        "valentin-33",
+                        null,
+                        null,
+                        null,
+                        null,
+                        null,
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    @Test
+    void createUserSpringJdbcWithoutTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserSpringJdbc(
+                new UserJson(
+                        null,
+                        "valentin-33",
+                        null,
+                        null,
+                        null,
+                        null,
+                        "valentin-33",
+                        "valentin-33",
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    @Test
+    void createUserJdbcTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserJdbcTransaction(
+                new UserJson(
+                        null,
+                        "valentin-33",
+                        null,
+                        null,
+                        "valentin-33",
+                        null,
+                        "valentin-33",
+                        "valentin-33",
+                        null
+                )
+        );
+        System.out.println(user);
+    }
+
+    @Test
+    void createUserJdbcWithoutTransactionTest() {
+        UsersDbClient usersDbClient = new UsersDbClient();
+        UserJson user = usersDbClient.createUserJdbc(
+                new UserJson(
+                        null,
+                        "valentin-33",
+                        "valentin-33",
+                        null,
+                        "valentin-33",
+                        null,
+                        "valentin-33",
+                        "valentin-33",
                         null
                 )
         );
