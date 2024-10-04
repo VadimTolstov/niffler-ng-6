@@ -5,6 +5,7 @@ import guru.qa.niffler.data.entity.auth.Authority;
 import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 
 import guru.qa.niffler.config.Config;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,10 +39,10 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
     @Override
     public List<AuthorityEntity> findAll() {
         List<AuthorityEntity> authAuthority = new ArrayList<>();
-        try (PreparedStatement statement = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "SELECT * FROM authority"
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                "SELECT * FROM \"authority\""
         )) {
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     AuthorityEntity authority = new AuthorityEntity();
 
@@ -56,5 +57,18 @@ public class AuthAuthorityDaoJdbc implements AuthAuthorityDao {
             throw new RuntimeException(e);
         }
         return authAuthority;
+    }
+
+    @Override
+    public void delete(AuthorityEntity authority) {
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                "DELETE FROM \"authority\" WHERE id = ?"
+        )) {
+            ps.setObject(1, authority.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

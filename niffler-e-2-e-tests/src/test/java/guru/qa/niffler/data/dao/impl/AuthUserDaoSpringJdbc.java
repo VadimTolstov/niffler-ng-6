@@ -18,6 +18,7 @@ import java.util.UUID;
 
 public class AuthUserDaoSpringJdbc implements AuthUserDao {
     private static final Config CFG = Config.getInstance();
+
     @Override
     public AuthUserEntity create(AuthUserEntity user) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
@@ -61,5 +62,17 @@ public class AuthUserDaoSpringJdbc implements AuthUserDao {
             PreparedStatement ps = con.prepareStatement("SELECT * FROM \"user\"");
             return ps;
         }, AuthUserEntityRowMapper.instance);
+    }
+
+    @Override
+    public void delete(AuthUserEntity user) {
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
+        jdbcTemplate.update(con -> {
+                    PreparedStatement ps = con.prepareStatement(
+                            "DELETE FROM \"user\" WHERE id = ?");
+                    ps.setObject(1, user.getId());
+                    return ps;
+                }
+        );
     }
 }
