@@ -12,4 +12,6 @@ public interface AuthUserDao {
     Optional<AuthUserEntity> findById(UUID id);
 
      List<AuthUserEntity> findAll();
+
+     void delete(AuthUserEntity user);
 }

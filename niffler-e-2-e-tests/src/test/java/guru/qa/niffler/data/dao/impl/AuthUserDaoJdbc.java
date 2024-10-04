@@ -4,7 +4,9 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
-import java.sql.*;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -76,10 +78,10 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     @Override
     public List<AuthUserEntity> findAll() {
         List<AuthUserEntity> authUsers = new ArrayList<>();
-        try (PreparedStatement statement = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "SELECT * FROM spend"
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                "SELECT * FROM \"user\""
         )) {
-            try (ResultSet resultSet = statement.executeQuery()) {
+            try (ResultSet resultSet = ps.executeQuery()) {
                 while (resultSet.next()) {
                     AuthUserEntity authUser = new AuthUserEntity();
 
@@ -98,5 +100,16 @@ public class AuthUserDaoJdbc implements AuthUserDao {
             throw new RuntimeException(e);
         }
         return authUsers;
+    }
+
+    @Override
+    public void delete(AuthUserEntity user) {
+        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                "DELETE FROM \"user\" WHERE id = ?")) {
+            ps.setObject(1, user.getId());
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
