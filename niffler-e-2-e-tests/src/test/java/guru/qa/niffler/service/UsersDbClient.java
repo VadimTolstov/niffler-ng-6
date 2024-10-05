@@ -47,7 +47,7 @@ public class UsersDbClient {
     );
 
     public UserJson createUserSpringJdbcTransaction(UserJson user) {
-        return txTemplate.execute(status -> {
+        return xaTransactionTemplate.execute(() -> {
                     AuthUserEntity authUser = new AuthUserEntity();
                     authUser.setUsername(user.username());
                     authUser.setPassword(pe.encode("12345"));
@@ -104,7 +104,7 @@ public class UsersDbClient {
     }
 
     public UserJson createUserJdbcTransaction(UserJson user) {
-        return txTemplate.execute(status -> {
+        return xaTransactionTemplate.execute(() -> {
                     AuthUserEntity authUser = new AuthUserEntity();
                     authUser.setUsername(user.username());
                     authUser.setPassword(pe.encode("12345"));

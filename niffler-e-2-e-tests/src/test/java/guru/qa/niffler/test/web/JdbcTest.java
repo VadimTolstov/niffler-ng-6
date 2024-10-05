@@ -22,7 +22,7 @@ public class JdbcTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "cat-name-tx-12",
+                                "cat-name-tx-114124",
                                 "duck",
                                 false
                         ),
@@ -42,7 +42,7 @@ public class JdbcTest {
         UserJson user = usersDbClient.createUserSpringJdbcTransaction(
                 new UserJson(
                         null,
-                        "valentin-10",
+                        "valentin-901",
                         null,
                         null,
                         null,
