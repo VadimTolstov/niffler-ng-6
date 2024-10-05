@@ -1,7 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
@@ -22,14 +22,14 @@ public class JdbcTest {
                         new Date(),
                         new CategoryJson(
                                 null,
-                                "cat-name-tx-2",
+                                "cat-name-tx-12",
                                 "duck",
                                 false
                         ),
                         CurrencyValues.RUB,
                         1000.0,
-                        "spend-name-tx",
-                        null
+                        "cat-name-tx-12",
+                        "cat-name-tx-12"
                 )
         );
 
@@ -42,7 +42,7 @@ public class JdbcTest {
         UserJson user = usersDbClient.createUserSpringJdbcTransaction(
                 new UserJson(
                         null,
-                        "valentin-4",
+                        "valentin-10",
                         null,
                         null,
                         null,

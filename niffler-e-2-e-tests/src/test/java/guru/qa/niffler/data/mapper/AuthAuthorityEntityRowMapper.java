@@ -1,8 +1,8 @@
 package guru.qa.niffler.data.mapper;
 
-import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 import guru.qa.niffler.data.entity.auth.Authority;
+import guru.qa.niffler.data.entity.auth.AuthorityEntity;
 import org.springframework.jdbc.core.RowMapper;
 
 import java.sql.ResultSet;
@@ -18,15 +18,15 @@ public class AuthAuthorityEntityRowMapper implements RowMapper<AuthorityEntity> 
 
     @Override
     public AuthorityEntity mapRow(ResultSet rs, int rowNum) throws SQLException {
-        AuthorityEntity authAuthority = new AuthorityEntity();
-        UUID userId = rs.getObject("user_id", UUID.class);
-        AuthUserEntity user = new AuthUserEntity();
-        user.setId(userId);
+        AuthorityEntity result = new AuthorityEntity();
+//        AuthUserEntity user = new AuthUserEntity();
+//        user.setId(rs.getObject("user_id", UUID.class));
 
-        authAuthority.setId(rs.getObject("id", UUID.class));
-        authAuthority.setUserId(user.getId());
-        authAuthority.setAuthority(Authority.valueOf(rs.getString("password")));
+        result.setId(rs.getObject("id", UUID.class));
+//        result.setUser(user);
+        result.setUser(rs.getObject("user_id", AuthUserEntity.class));
+        result.setAuthority(Authority.valueOf(rs.getString("password")));
 
-        return authAuthority;
+        return result;
     }
 }

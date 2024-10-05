@@ -2,7 +2,7 @@ package guru.qa.niffler.api;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.CategoryJson;
-import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.model.SpendJson;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;

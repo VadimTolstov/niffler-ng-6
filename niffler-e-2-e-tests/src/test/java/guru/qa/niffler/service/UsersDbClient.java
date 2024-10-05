@@ -19,7 +19,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 
 public class UsersDbClient {
@@ -62,7 +61,7 @@ public class UsersDbClient {
                     AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
                             e -> {
                                 AuthorityEntity ae = new AuthorityEntity();
-                                ae.setUserId(createdAuthUser.getId());
+                                ae.setUser(createdAuthUser);
                                 ae.setAuthority(e);
                                 return ae;
                             }
@@ -91,7 +90,7 @@ public class UsersDbClient {
         AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
                 e -> {
                     AuthorityEntity ae = new AuthorityEntity();
-                    ae.setUserId(createdAuthUser.getId());
+                    ae.setUser(createdAuthUser);
                     ae.setAuthority(e);
                     return ae;
                 }
@@ -119,7 +118,7 @@ public class UsersDbClient {
                     AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
                             e -> {
                                 AuthorityEntity ae = new AuthorityEntity();
-                                ae.setUserId(createdAuthUser.getId());
+                                ae.setUser(createdAuthUser);
                                 ae.setAuthority(e);
                                 return ae;
                             }
@@ -148,7 +147,7 @@ public class UsersDbClient {
         AuthorityEntity[] authorityEntities = Arrays.stream(Authority.values()).map(
                 e -> {
                     AuthorityEntity ae = new AuthorityEntity();
-                    ae.setUserId(createdAuthUser.getId());
+                    ae.setUser(createdAuthUser);
                     ae.setAuthority(e);
                     return ae;
                 }

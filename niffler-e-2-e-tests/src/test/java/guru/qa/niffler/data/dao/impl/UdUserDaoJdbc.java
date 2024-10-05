@@ -3,9 +3,8 @@ package guru.qa.niffler.data.dao.impl;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
-import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 
-import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
