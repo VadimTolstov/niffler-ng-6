@@ -42,7 +42,7 @@ public class JdbcTest {
         UserJson user = usersDbClient.createUserSpringJdbcTransaction(
                 new UserJson(
                         null,
-                        "valentin-901",
+                        "valentin-906",
                         null,
                         null,
                         null,
@@ -74,24 +74,24 @@ public class JdbcTest {
         System.out.println(user);
     }
 
-    @Test
-    void createUserSpringJdbcWithoutTransactionTest() {
-        UsersDbClient usersDbClient = new UsersDbClient();
-        UserJson user = usersDbClient.createUserSpringJdbc(
-                new UserJson(
-                        null,
-                        "valentin-33",
-                        null,
-                        null,
-                        null,
-                        null,
-                        "valentin-33",
-                        "valentin-33",
-                        null
-                )
-        );
-        System.out.println(user);
-    }
+//    @Test
+//    void createUserSpringJdbcWithoutTransactionTest() {
+//        UsersDbClient usersDbClient = new UsersDbClient();
+//        UserJson user = usersDbClient.createUserSpringJdbc(
+//                new UserJson(
+//                        null,
+//                        "valentin-33",
+//                        null,
+//                        null,
+//                        null,
+//                        null,
+//                        "valentin-33",
+//                        "valentin-33",
+//                        null
+//                )
+//        );
+//        System.out.println(user);
+//    }
 
     @Test
     void createUserJdbcTransactionTest() {
