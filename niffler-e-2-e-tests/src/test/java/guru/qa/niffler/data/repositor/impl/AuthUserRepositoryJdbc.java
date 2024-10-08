@@ -66,7 +66,6 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
                 "select * from \"user\" u join \"authority\" a on u.id = a.user_id where u.id = ?"
         )) {
             ps.setObject(1, id);
-
             ps.execute();
 
             try (ResultSet rs = ps.getResultSet()) {
@@ -105,7 +104,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
         }
     }
 
-    @Override
+    @Override//todo
     public List<AuthUserEntity> findAll() {
         List<AuthUserEntity> authUsers = new ArrayList<>();
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
@@ -134,10 +133,16 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
 
     @Override
     public void delete(AuthUserEntity user) {
-        try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
-                "DELETE FROM \"user\" WHERE id = ?")) {
-            ps.setObject(1, user.getId());
-            ps.executeUpdate();
+        try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                "DELETE FROM \"user\" WHERE id = ?");
+             PreparedStatement authorityPS = holder(CFG.authJdbcUrl()).connection().prepareStatement(
+                     "DELETE FROM \"authority\" WHERE user_id = ?")) {
+
+            userPs.setObject(1, user.getId());
+            userPs.executeUpdate();
+
+            authorityPS.setObject(1, user.getId());
+            authorityPS.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
