@@ -48,7 +48,14 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     @Override
     public Optional<UserEntity> findById(UUID id) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
-                "SELECT * FROM \"user\" u join \"friendship\" f on u.id = f.requester_id where u.id = ?"
+                "SELECT DISTINCT u.*, " +
+                        "f.requester_id AS requester_id, " +
+                        "f.addressee_id AS addressee_id, " +
+                        "f.status AS friendship_status, " +
+                        "f.created_date AS created_date " +
+                        "FROM \"user\" u " +
+                        "LEFT JOIN \"friendship\" f ON u.id = f.requester_id OR u.id = f.addressee_id " +
+                        "WHERE u.id = ?"
         )) {
             ps.setObject(1, id);
             ps.execute();
@@ -77,7 +84,6 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
                     us.setPhoto(rs.getBytes("photo"));
                     us.setPhotoSmall(rs.getBytes("photo_small"));
                     us.setFullname(rs.getString("full_name"));
-                    return Optional.of(us);
                 }
                 if (user == null) {
                     return Optional.empty();
