@@ -71,15 +71,16 @@ public class JdbcTest {
 //        usersDbClient.addFriend(myself, friend);
 //    }
 
+    static UsersDbClient usersDbClient = new UsersDbClient();
+
     @ValueSource(strings = {
-            "oleg-2",
-            "oleg-3",
-            "oleg-4"
+            "oleg-5"
     })
     @ParameterizedTest
     void springJdbcTest2(String uname) {
-        UsersDbClient usersDbClient = new UsersDbClient();
         UserJson user = usersDbClient.createUser(uname,
-                "12345");
+                "12345"
+        );
+        usersDbClient.addIncomeInvitation(user, 1);
     }
 }

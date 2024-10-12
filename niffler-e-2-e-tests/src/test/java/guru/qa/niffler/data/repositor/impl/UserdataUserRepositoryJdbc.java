@@ -130,6 +130,16 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
+    public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
+
+    }
+
+    @Override
+    public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
+
+    }
+
+    @Override
     public Optional<UserEntity> findByUsername(String username) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "SELECT * FROM user WHERE username = ?"

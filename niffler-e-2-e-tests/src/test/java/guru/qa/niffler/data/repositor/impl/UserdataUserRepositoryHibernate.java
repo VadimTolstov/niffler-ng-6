@@ -1,6 +1,7 @@
 package guru.qa.niffler.data.repositor.impl;
 
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.data.entity.userdata.FriendshipStatus;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.repositor.UserdataUserRepository;
@@ -41,6 +42,7 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
             return Optional.empty();
         }
     }
+
     @Override
     public List<UserEntity> findAll() {
         return null;
@@ -54,17 +56,20 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
     @Override
     public void addIncomeInvitation(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
+        addressee.addFriends(FriendshipStatus.PENDING, requester);
     }
 
     @Override
     public void addOutcomeInvitation(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
-
+        requester.addFriends(FriendshipStatus.PENDING, addressee);
     }
+
     @Override
     public void addFriend(UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
-
+        requester.addFriends(FriendshipStatus.ACCEPTED, addressee);
+        addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
     }
 
     @Override
