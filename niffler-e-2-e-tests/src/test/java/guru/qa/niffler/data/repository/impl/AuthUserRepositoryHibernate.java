@@ -1,14 +1,12 @@
-package guru.qa.niffler.data.repositor.impl;
+package guru.qa.niffler.data.repository.impl;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
-import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.jpa.EntityManagers;
-import guru.qa.niffler.data.repositor.AuthUserRepository;
+import guru.qa.niffler.data.repository.AuthUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -26,6 +24,13 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
     }
 
     @Override
+    public AuthUserEntity update(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.merge(user);
+        return user;
+    }
+
+    @Override
     public Optional<AuthUserEntity> findById(UUID id) {
         return Optional.ofNullable(entityManager.find(AuthUserEntity.class, id));
     }
@@ -35,8 +40,8 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
         try {
             return Optional.of(
                     entityManager.createQuery("SELECT u FROM UserEntity u WHERE u.username =: username", AuthUserEntity.class)
-                    .setParameter("username", username)
-                    .getSingleResult()
+                            .setParameter("username", username)
+                            .getSingleResult()
             );
         } catch (NoResultException e) {
             return Optional.empty();
@@ -44,12 +49,8 @@ public class AuthUserRepositoryHibernate implements AuthUserRepository {
     }
 
     @Override
-    public List<AuthUserEntity> findAll() {
-        return null;
-    }
-
-    @Override
-    public void delete(AuthUserEntity user) {
-
+    public void remove(AuthUserEntity user) {
+        entityManager.joinTransaction();
+        entityManager.remove(user);
     }
 }
