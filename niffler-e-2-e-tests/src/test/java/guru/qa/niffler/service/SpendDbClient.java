@@ -74,13 +74,14 @@ public class SpendDbClient implements SpendClient {
         });
     }
 
-    @Override
+    @Override //переписал
     public CategoryJson createCategory(CategoryJson category) {
-        return xaTransactionTemplate.execute(() -> {
-            CategoryEntity categoryEntity = CategoryEntity.fromJson(category);
-            CategoryEntity createdCategoryEntity = spendRepository.createCategory(categoryEntity);
-            return CategoryJson.fromEntity(createdCategoryEntity);
-        });
+        return xaTransactionTemplate.execute(() -> CategoryJson.fromEntity(
+                        spendRepository.createCategory(
+                                CategoryEntity.fromJson(category)
+                        )
+                )
+        );
     }
 
     @Override

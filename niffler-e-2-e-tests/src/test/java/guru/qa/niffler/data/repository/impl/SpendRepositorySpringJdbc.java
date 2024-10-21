@@ -7,6 +7,7 @@ import guru.qa.niffler.data.mapper.CategoryEntityRowMapper;
 import guru.qa.niffler.data.mapper.SpendEntityRowMapper;
 import guru.qa.niffler.data.repository.SpendRepository;
 import guru.qa.niffler.data.tpl.DataSources;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -91,25 +92,37 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     @Override
     public Optional<CategoryEntity> findCategoryById(UUID id) {
         String sql = "SELECT * FROM category WHERE id = ?";
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(sql, CategoryEntityRowMapper.instance, id)
-        );
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject(sql, CategoryEntityRowMapper.instance, id)
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<CategoryEntity> findCategoryByUsernameAndCategoryName(String username, String name) {
         String sql = "SELECT * FROM category WHERE username = ? AND name = ?";
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(sql, CategoryEntityRowMapper.instance, username, name)
-        );
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject(sql, CategoryEntityRowMapper.instance, username, name)
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override
     public Optional<SpendEntity> findById(UUID id) {
         String sql = "SELECT * FROM spend WHERE id = ?";
-        return Optional.ofNullable(
-                jdbcTemplate.queryForObject(sql, SpendEntityRowMapper.instance, id)
-        );
+        try {
+            return Optional.ofNullable(
+                    jdbcTemplate.queryForObject(sql, SpendEntityRowMapper.instance, id)
+            );
+        } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

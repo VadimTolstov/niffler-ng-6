@@ -1,5 +1,6 @@
 package guru.qa.niffler.jupiter.annotation;
 
+import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.jupiter.extension.SpendingExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 
@@ -17,4 +18,6 @@ public @interface Spending {
     String description();
 
     double amount();
+
+    CurrencyValues currency() default CurrencyValues.RUB;
 }

@@ -35,15 +35,17 @@ public class UsersDbClient implements UsersClient {
 
     @Override
     public UserJson createUser(String username, String password) {
-        return xaTransactionTemplate.execute(() -> {
-                    AuthUserEntity authUser = authUserEntity(username, password);
-                    authUserRepository.create(authUser);
-                    return UserJson.fromEntity(
-                            userdataUserRepository.create(userEntity(username)),
-                            null
-                    );
-                }
+        return xaTransactionTemplate.execute(() ->
+                UserJson.fromEntity((createNewUser(username, password)),
+                        null
+                )
         );
+    }
+
+    private UserEntity createNewUser(String username, String password) {
+        AuthUserEntity authUser = authUserEntity(username, password);
+        authUserRepository.create(authUser);
+        return userdataUserRepository.create(userEntity(username));
     }
 
     @Override
