@@ -8,6 +8,7 @@ import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.SpendDbClient;
+import guru.qa.niffler.service.UserRestApiClient;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
@@ -22,7 +23,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     public static final ExtensionContext.Namespace NAMESPACE = ExtensionContext.Namespace.create(UserExtension.class);
     private static final String defaultPassword = "12345";
-    private final UsersClient usersClient = new UsersDbClient();
+    private final UsersClient usersClient = new UserRestApiClient();
 
     @Override
     public void beforeEach(ExtensionContext context) throws Exception {
@@ -31,7 +32,9 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                     if ("".equals(userAnno.username())) {
                         final String username = RandomDataUtils.randomUsername();
                         UserJson testUser = usersClient.createUser(username, defaultPassword);
-                        List<UserJson> income =
+                        List<UserJson> income = usersClient.createIncomeInvitations(testUser, userAnno.income());
+                        List<UserJson> outcome = usersClient.createOutcomeInvitations(testUser, userAnno.outcome());
+                        List<UserJson> friends = usersClient.createFriends(testUser, userAnno.friends());
 
                         context.getStore(NAMESPACE).put(
                                 context.getUniqueId(),
@@ -39,7 +42,11 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                                         new TestData(
                                                 defaultPassword,
                                                 new ArrayList<>(),
-                                                new ArrayList<>()
+                                                new ArrayList<>(),
+                                                income.stream().map(UserJson::username).toList(),
+                                                outcome.stream().map(UserJson::username).toList(),
+                                                friends.stream().map(UserJson::username).toList()
+
                                         )
                                 )
                         );
