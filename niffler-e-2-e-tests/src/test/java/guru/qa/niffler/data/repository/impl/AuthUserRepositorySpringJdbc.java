@@ -9,6 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.util.Map;
 import java.util.Optional;
@@ -19,7 +20,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.authJdbcUrl()));
 
     @Override
-    public AuthUserEntity create(AuthUserEntity user) {
+    public AuthUserEntity create(@Nonnull AuthUserEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         // Вставляем пользователя и получаем сгенерированный ID
         jdbcTemplate.update(connection -> {
@@ -51,7 +52,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     }
 
     @Override
-    public AuthUserEntity update(AuthUserEntity user) {
+    public AuthUserEntity update(@Nonnull AuthUserEntity user) {
         // SQL запрос для обновления данных пользователя
         String updateUserSql = "UPDATE \"user\" SET password = ?, enabled = ?, " +
                 "account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ? " +
@@ -116,7 +117,7 @@ public class AuthUserRepositorySpringJdbc implements AuthUserRepository {
     }
 
     @Override
-    public void remove(AuthUserEntity user) {
+    public void remove(@Nonnull AuthUserEntity user) {
         // Удаляем все роли пользователя
         String deleteAuthoritySql = "DELETE FROM \"authority\" WHERE user_id = ?";
         jdbcTemplate.update(deleteAuthoritySql, user.getId());

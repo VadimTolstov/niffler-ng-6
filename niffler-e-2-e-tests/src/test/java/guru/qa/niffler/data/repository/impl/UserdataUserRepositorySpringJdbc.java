@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
     JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.userdataJdbcUrl()));
 
     @Override
-    public UserEntity create(UserEntity user) {
+    public UserEntity create(@Nonnull UserEntity user) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -60,7 +61,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
 
 
     @Override
-    public UserEntity update(UserEntity user) {
+    public UserEntity update(@Nonnull UserEntity user) {
         String sql = "UPDATE \"user\" SET currency = ?, firstname = ?, surname = ?, photo = ?, " +
                 "photo_small = ?, full_name = ? WHERE id = ?";
         jdbcTemplate.update(sql,
@@ -76,7 +77,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
     }
 
     @Override
-    public void sendInvitation(UserEntity requester, UserEntity addressee) {
+    public void sendInvitation(@Nonnull UserEntity requester, @Nonnull UserEntity addressee) {
         String sql = "INSERT INTO \"friendship\" (requester_id, addressee_id, status, created_date) " +
                 "VALUES (?, ?, ?, ?)";
         jdbcTemplate.update(sql,
@@ -88,7 +89,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
     }
 
     @Override
-    public void addFriend(UserEntity requester, UserEntity addressee) {
+    public void addFriend(@Nonnull UserEntity requester, @Nonnull UserEntity addressee) {
         String sql = "INSERT INTO \"friendship\" (requester_id, addressee_id, status, created_date) VALUES (?, ?, ?, ?)";
         // Создаем параметры для вставки дружбы в двух направлениях
         Object[] firstPair = {
@@ -110,7 +111,7 @@ public class UserdataUserRepositorySpringJdbc implements UserdataUserRepository 
     }
 
     @Override
-    public void remove(UserEntity user) {
+    public void remove(@Nonnull UserEntity user) {
         String sql = "DELETE FROM \"user\" WHERE id = ?";
         jdbcTemplate.update(sql, user.getId());
     }

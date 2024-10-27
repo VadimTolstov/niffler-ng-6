@@ -2,16 +2,23 @@ package guru.qa.niffler.api;
 
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.model.UserJson;
+import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@ParametersAreNonnullByDefault
 public class UserApiClient {
 
     private final Retrofit retrofit = new Retrofit.Builder()
@@ -21,7 +28,8 @@ public class UserApiClient {
 
     private final UserApi userApi = retrofit.create(UserApi.class);
 
-    public UserJson registerUser(UserJson userJson) {
+    @Step("Send POST(\"/register\") to niffler-userdata")
+    public @Nullable UserJson registerUser(UserJson userJson) {
         final Response<UserJson> response;
         try {
             response = userApi
@@ -34,7 +42,8 @@ public class UserApiClient {
         return response.body();
     }
 
-    public UserJson getCurrentUser(String username) {
+    @Step("Send GET(\"/internal/users/current\") to niffler-userdata")
+    public @Nullable UserJson getCurrentUser(String username) {
         final Response<UserJson> response;
         try {
             response = userApi
@@ -47,7 +56,8 @@ public class UserApiClient {
         return response.body();
     }
 
-    public List<UserJson> getAllUsers(String username, String searchQuery) {
+    @Step("Send GET(\"/internal/users/all\") to niffler-userdata")
+    public @Nonnull List<UserJson> getAllUsers(String username, String searchQuery) {
         final Response<List<UserJson>> response;
         try {
             response = userApi
@@ -57,10 +67,13 @@ public class UserApiClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
 
-    public UserJson updateUserInfo(UserJson userJson) {
+    @Step("Send POST(\"/internal/users/update\") to niffler-userdata")
+    public @Nullable UserJson updateUserInfo(UserJson userJson) {
         final Response<UserJson> response;
         try {
             response = userApi
@@ -73,7 +86,8 @@ public class UserApiClient {
         return response.body();
     }
 
-    public UserJson sendInvitation(String username, String targetUsername) {
+    @Step("Send POST(\"/internal/invitations/send\") to niffler-userdata")
+    public @Nullable UserJson sendInvitation(String username, String targetUsername) {
         final Response<UserJson> response;
         try {
             response = userApi
@@ -86,7 +100,8 @@ public class UserApiClient {
         return response.body();
     }
 
-    public UserJson acceptInvitation(String username, String targetUsername) {
+    @Step("Send POST(\"/internal/invitations/accept\") to niffler-userdata")
+    public @Nullable UserJson acceptInvitation(String username, String targetUsername) {
         final Response<UserJson> response;
         try {
             response = userApi
@@ -99,7 +114,8 @@ public class UserApiClient {
         return response.body();
     }
 
-    public UserJson declineInvitation(String username, String targetUsername) {
+    @Step("Send POST(\"/internal/invitations/decline\") to niffler-userdata")
+    public @Nullable UserJson declineInvitation(String username, String targetUsername) {
         final Response<UserJson> response;
         try {
             response = userApi
@@ -112,7 +128,8 @@ public class UserApiClient {
         return response.body();
     }
 
-    private List<UserJson> friends(String username, String searchQuery) {
+    @Step("Send GET(\"/internal/friends/all\") to niffler-userdata")
+    private @Nonnull List<UserJson> friends(String username, String searchQuery) {
         final Response<List<UserJson>> response;
         try {
             response = userApi
@@ -122,10 +139,13 @@ public class UserApiClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
 
-    public List<UserJson> removeFriend(String username, String searchQuery) {
+    @Step("Send DELETE(\"/internal/friends/remove\") to niffler-userdata")
+    public @Nonnull List<UserJson> removeFriend(String username, String searchQuery) {
         final Response<List<UserJson>> response;
         try {
             response = userApi
@@ -135,6 +155,8 @@ public class UserApiClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
     }
 }

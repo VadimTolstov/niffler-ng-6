@@ -1,5 +1,6 @@
 package guru.qa.niffler.data.tpl;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -20,7 +21,7 @@ public class Connections {
         );
     }
 
-    public static JdbcConnectionHolders holders(String... jdbcUrl) {
+    public static @Nonnull JdbcConnectionHolders holders(@Nonnull String... jdbcUrl) {
         List<JdbcConnectionHolder> result = new ArrayList<>();
         for (String url : jdbcUrl) {
             result.add(holder(url));

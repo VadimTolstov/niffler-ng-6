@@ -1,35 +1,56 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.config.Config;
+import io.qameta.allure.Step;
 
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selenide.$;
-import static com.codeborne.selenide.Selenide.$x;
-import static org.assertj.core.api.Assertions.assertThat;
 
+@ParametersAreNonnullByDefault
 public class ProfilePage {
-    private final SelenideElement username = $("input[name='username']"),
-            archivedCheckbox = $("input[type='checkbox']");
+    public static String url = Config.getInstance().frontUrl() + "profile";
 
+    private final SelenideElement showArchivedToggle = $(".MuiSwitch-switchBase");
+    private final SelenideElement nameInput = $("#name");
+    private final SelenideElement saveButton = $("button[type='submit']");
+    private final SelenideElement successSaveChangesMessage = $(".MuiAlert-message");
 
-    public void checkUsername(String currentUsername) {
-        assertThat(username.getValue())
-                .as("неверный username")
-                .isEqualTo(currentUsername);
+    @Step("Проверить отображение категории: {category}")
+    public void categoryShouldBeVisible(String category) {
+        $(byTagAndText("span", category)).shouldBe(visible);
     }
 
-    public ProfilePage clickShowArchivedCheckbox() {
-        archivedCheckbox.click();
+    @Step("Проверить отсутствие категории: {category}")
+    public ProfilePage categoryShouldNotBeVisible(String category) {
+        $(byTagAndText("span", category)).shouldNotBe(visible);
         return this;
     }
 
-    public void checkCategoryArchived(boolean archived, String categoryName) {
-        SelenideElement category = $x(String.format("//*[text()='%s']", categoryName));
-        if (archived) {
-            category.$x("../..//button[@aria-label='Unarchive category']").shouldHave(Condition.visible);
-        } else {
-            category.$x("../../..//button[@aria-label='Edit category']").shouldHave(Condition.visible);
-            category.$x("../..//button[@aria-label='Archive category']").shouldHave(Condition.visible);
-        }
+    @Step("Показать архивные категории")
+    public ProfilePage showArchivedCategories() {
+        showArchivedToggle.click();
+        return this;
+    }
+
+    @Step("Ввести имя: {name}")
+    public ProfilePage setName(String name) {
+        nameInput.setValue(name);
+        return this;
+    }
+
+    @Step("Нажать кнопку сохранить изменения")
+    public ProfilePage clickSaveButton() {
+        saveButton.click();
+        return this;
+    }
+
+    @Step("Проверить успешное сообщение об обновлении профиля")
+    public void shouldBeVisibleSaveChangesSuccessMessage() {
+        successSaveChangesMessage.shouldHave(text("Profile successfully updated"));
     }
 }

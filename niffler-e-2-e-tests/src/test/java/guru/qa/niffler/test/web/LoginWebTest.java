@@ -64,6 +64,6 @@ public class LoginWebTest {
     void userAuthorization(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(user.username(), user.testData().password())
-                .checkingHeader();
+                .verifyMainComponentsIsVisible();
     }
 }

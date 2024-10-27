@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.proxy.HibernateProxy;
 
+import javax.annotation.Nonnull;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +45,7 @@ public class AuthUserEntity implements Serializable {
   @OneToMany(fetch = EAGER, cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
   private List<AuthorityEntity> authorities = new ArrayList<>();
 
-  public void addAuthorities(AuthorityEntity... authorities) {
+  public void addAuthorities(@Nonnull AuthorityEntity... authorities) {
     for (AuthorityEntity authority : authorities) {
       this.authorities.add(authority);
       authority.setUser(this);
