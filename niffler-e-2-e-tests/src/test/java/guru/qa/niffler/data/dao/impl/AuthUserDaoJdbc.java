@@ -4,6 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.AuthUserDao;
 import guru.qa.niffler.data.entity.auth.AuthUserEntity;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -18,7 +19,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public AuthUserEntity create(AuthUserEntity user) {
+    public AuthUserEntity create(@Nonnull AuthUserEntity user) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"user\" (username, password, enabled, account_non_expired," +
                         " account_non_locked, credentials_non_expired)" +
@@ -103,7 +104,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
 
     @Override
-    public void delete(AuthUserEntity user) {
+    public void delete(@Nonnull AuthUserEntity user) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM \"user\" WHERE id = ?")) {
             ps.setObject(1, user.getId());
@@ -114,7 +115,7 @@ public class AuthUserDaoJdbc implements AuthUserDao {
     }
 
     @Override
-    public AuthUserEntity update(AuthUserEntity user) {
+    public AuthUserEntity update(@Nonnull AuthUserEntity user) {
         try (PreparedStatement ps = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 """
                UPDATE "user" SET 

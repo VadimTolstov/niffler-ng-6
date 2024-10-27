@@ -16,6 +16,7 @@ import org.junit.jupiter.api.extension.ParameterResolutionException;
 import org.junit.jupiter.api.extension.ParameterResolver;
 import org.junit.platform.commons.support.AnnotationSupport;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class CategoryExtension implements
     private final SpendClient spendClient = new SpendDbClient();
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(@Nonnull ExtensionContext context) throws Exception {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), User.class)
                 .ifPresent(userAnno -> {
                     if (ArrayUtils.isNotEmpty(userAnno.categories())) {
@@ -65,7 +66,7 @@ public class CategoryExtension implements
     }
 
     @Override
-    public void afterTestExecution(ExtensionContext context) throws Exception {
+    public void afterTestExecution(@Nonnull ExtensionContext context) throws Exception {
         UserJson user = context.getStore(UserExtension.NAMESPACE)
                 .get(context.getUniqueId(), UserJson.class);
 
@@ -78,13 +79,13 @@ public class CategoryExtension implements
     }
 
     @Override
-    public boolean supportsParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public boolean supportsParameter(@Nonnull ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
         return parameterContext.getParameter().getType().isAssignableFrom(CategoryJson[].class);
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public CategoryJson[] resolveParameter(ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
+    public CategoryJson[] resolveParameter(ParameterContext parameterContext, @Nonnull ExtensionContext extensionContext) throws ParameterResolutionException {
         return (CategoryJson[]) extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), List.class).toArray();
     }
 }

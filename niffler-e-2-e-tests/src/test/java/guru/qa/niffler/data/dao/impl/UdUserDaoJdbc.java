@@ -5,6 +5,7 @@ import guru.qa.niffler.data.dao.UdUserDao;
 import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public UserEntity create(UserEntity user) {
+    public UserEntity create(@Nonnull UserEntity user) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO user (username, currency) VALUES (?, ?)",
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -97,7 +98,7 @@ public class UdUserDaoJdbc implements UdUserDao {
     }
 
     @Override
-    public void delete(UserEntity user) {
+    public void delete(@Nonnull UserEntity user) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM spend WHERE id = ?")) {
             ps.setObject(1, user.getId());

@@ -1,58 +1,67 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.Condition;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.component.Header;
+import guru.qa.niffler.page.component.SearchField;
+import guru.qa.niffler.page.component.SpendingTable;
+import io.qameta.allure.Step;
+import lombok.Getter;
 
-import static com.codeborne.selenide.Condition.text;
-import static com.codeborne.selenide.Condition.visible;
+import javax.annotation.ParametersAreNonnullByDefault;
+
+import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
+@ParametersAreNonnullByDefault
 public class MainPage {
-    private final static String HEADER = "History of Spendings";
+    @Getter
+    private final Header header = new Header();
+    @Getter
+    private final SpendingTable spendingTable = new SpendingTable();
+    private final SearchField searchField = new SearchField();
+    private final SelenideElement spendings = $("#spendings");
+    private final SelenideElement statistics = $("#stat");
 
-    private final ElementsCollection tableRows = $("#spendings tbody ").$$("tr");
-    private final ElementsCollection listCheckbox = $$("[type='checkbox']");
-
-    private final SelenideElement
-            buttonAddNewSpendingPage = $("a[href='spending'"),
-            header = $("#spendings h2"),
-            search = $("input[placeholder='Search']"),
-            selectPeriod = $("#period"),
-            selectCurrency = $("#currency"),
-            buttonDelete = $("#delete"),
-            buttonNext = $("#page-next"),
-            buttonPrevious = $("#page-prev"),
-            personIcon = $("svg[data-testid='PersonIcon']"),
-            openProfilePage = $("a[href='/profile']"),
-            openFriendPage = $("a[href='/people/friends']");
-
+    @Step("Редактировать трату: {spendingDescription}")
     public EditSpendingPage editSpending(String spendingDescription) {
-        tableRows.find(text(spendingDescription)).$$("td").get(5).click();
+        searchField.search(spendingDescription);
+        spendingTable.editSpending(spendingDescription);
         return new EditSpendingPage();
     }
 
-    public void checkThatTableContainsSpending(String spendingDescription) {
-        tableRows.find(text(spendingDescription)).should(visible);
+    @Step("Проверить, что компоненты главной страницы видны")
+    public void verifyMainComponentsIsVisible() {
+        statistics.shouldBe(visible);
+        spendingTable.titleIsVisible();
     }
 
-    public MainPage checkingHeader() {
-        header.shouldHave(visible, text(HEADER));
-        return this;
+    @Step("Проверить, что таблица трат содержит: {spendingDescription}")
+    public void checkThatTableContainsSpending(String... spendingDescription) {
+        for (String spend : spendingDescription) {
+            searchField.search(spend);
+            spendingTable.checkTableContains(spend);
+            searchField.clearIfNotEmpty();
+        }
     }
 
-    public MainPage clickPersonIcon() {
-        personIcon.click();
-        return this;
+    @Step("Открыть страницу всех людей")
+    public PeoplePage openAllPeople() {
+        header.toAllPeoplePage();
+        return new PeoplePage();
     }
 
+    @Step("Открыть страницу профиля")
     public ProfilePage openProfilePage() {
-        openProfilePage.click();
+        header.toProfilePage();
         return new ProfilePage();
     }
 
-    public FriendsPage openFriendPage() {
-        openFriendPage.click();
-        return new FriendsPage();
+    @Step("Открыть страницу друзей")
+    public PeoplePage openFriendPage() {
+        header.toFriendsPage();
+        return new PeoplePage();
     }
 }

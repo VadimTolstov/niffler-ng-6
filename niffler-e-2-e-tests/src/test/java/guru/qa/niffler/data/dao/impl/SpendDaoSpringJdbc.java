@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
 import javax.sql.DataSource;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
@@ -22,7 +23,7 @@ public class SpendDaoSpringJdbc implements SpendDao {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public SpendEntity create(SpendEntity spend) {
+    public SpendEntity create(@Nonnull SpendEntity spend) {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
         KeyHolder kh = new GeneratedKeyHolder();
         jdbcTemplate.update(con -> {

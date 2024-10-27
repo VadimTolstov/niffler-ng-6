@@ -8,6 +8,7 @@ import guru.qa.niffler.data.entity.userdata.UserEntity;
 import guru.qa.niffler.data.mapper.UdUserEntityRowMapper;
 import guru.qa.niffler.data.repository.UserdataUserRepository;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,7 +23,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public UserEntity create(UserEntity user) {
+    public UserEntity create(@Nonnull UserEntity user) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"user\" (username, currency) VALUES (?, ?)",
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -91,7 +92,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void addFriend(UserEntity requester, UserEntity addressee) {
+    public void addFriend(@Nonnull UserEntity requester, @Nonnull UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"friendship\" (requester_id, addressee_id, status, created_date) " +
                         "VALUES (?, ?, ?, ?)")) {
@@ -114,7 +115,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void sendInvitation(UserEntity requester, UserEntity addressee) {
+    public void sendInvitation(@Nonnull UserEntity requester, @Nonnull UserEntity addressee) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"friendship\" (requester_id, addressee_id, status, created_date) " +
                         "VALUES (?, ?, ?, ?)")) {
@@ -156,7 +157,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public UserEntity update(UserEntity user) {
+    public UserEntity update(@Nonnull UserEntity user) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "UPDATE \"user\" SET currency = ?, firstname = ?, surname = ?, photo = ?, " +
                         "photo_small = ?, full_name = ? WHERE id = ?")) {
@@ -175,7 +176,7 @@ public class UserdataUserRepositoryJdbc implements UserdataUserRepository {
     }
 
     @Override
-    public void remove(UserEntity user) {
+    public void remove(@Nonnull UserEntity user) {
         try (PreparedStatement ps = holder(CFG.userdataJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM spend WHERE id = ?")) {
             ps.setObject(1, user.getId());

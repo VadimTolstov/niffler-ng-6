@@ -4,6 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.dao.CategoryDao;
 import guru.qa.niffler.data.entity.spend.CategoryEntity;
 
+import javax.annotation.Nonnull;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,7 +17,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public CategoryEntity create(CategoryEntity category) {
+    public CategoryEntity create(@Nonnull CategoryEntity category) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"category\" (username, name, archived) " +
                         "VALUES (?, ?, ?)",
@@ -118,7 +119,7 @@ public class CategoryDaoJdbc implements CategoryDao {
     }
 
     @Override
-    public void deleteCategory(CategoryEntity category) {
+    public void deleteCategory(@Nonnull CategoryEntity category) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM \"category\" WHERE id = ?"
         )) {

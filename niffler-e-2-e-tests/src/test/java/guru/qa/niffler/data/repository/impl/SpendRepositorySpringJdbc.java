@@ -12,6 +12,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +24,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     private final JdbcTemplate jdbcTemplate = new JdbcTemplate(DataSources.dataSource(CFG.spendJdbcUrl()));
 
     @Override
-    public SpendEntity create(SpendEntity spend) {
+    public SpendEntity create(@Nonnull SpendEntity spend) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -46,7 +47,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
-    public SpendEntity update(SpendEntity spend) {
+    public SpendEntity update(@Nonnull SpendEntity spend) {
         String updateSql = "UPDATE spend SET spend_date = ?, currency = ?, amount = ?, description = ? WHERE id = ?";
         jdbcTemplate.update(updateSql,
                 new java.sql.Date(spend.getSpendDate().getTime()),
@@ -59,7 +60,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity createCategory(CategoryEntity category) {
+    public CategoryEntity createCategory(@Nonnull CategoryEntity category) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
@@ -78,7 +79,7 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity updateCategory(CategoryEntity category) {
+    public CategoryEntity updateCategory(@Nonnull CategoryEntity category) {
         String updateSql = "UPDATE category SET name = ?, username = ?, archived = ? WHERE id = ?";
         jdbcTemplate.update(updateSql,
                 category.getName(),
@@ -132,13 +133,13 @@ public class SpendRepositorySpringJdbc implements SpendRepository {
     }
 
     @Override
-    public void remove(SpendEntity spend) {
+    public void remove(@Nonnull SpendEntity spend) {
         String sql = "DELETE FROM spend WHERE id = ?";
         jdbcTemplate.update(sql, spend.getId());
     }
 
     @Override
-    public void removeCategory(CategoryEntity category) {
+    public void removeCategory(@Nonnull CategoryEntity category) {
         String sql = "DELETE FROM category WHERE id = ?";
         jdbcTemplate.update(sql, category.getId());
     }

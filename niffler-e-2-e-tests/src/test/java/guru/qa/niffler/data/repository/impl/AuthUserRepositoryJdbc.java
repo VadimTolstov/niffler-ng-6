@@ -8,6 +8,7 @@ import guru.qa.niffler.data.mapper.AuthUserEntityRowMapper;
 import guru.qa.niffler.data.mapper.extractor.AuthUserResultSetExtractor;
 import guru.qa.niffler.data.repository.AuthUserRepository;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,7 +20,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public AuthUserEntity create(AuthUserEntity user) {
+    public AuthUserEntity create(@Nonnull AuthUserEntity user) {
         try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO \"user\" (username, password, enabled, account_non_expired," +
                         " account_non_locked, credentials_non_expired)" +
@@ -59,7 +60,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     }
 
     @Override
-    public AuthUserEntity update(AuthUserEntity user) {
+    public AuthUserEntity update(@Nonnull AuthUserEntity user) {
         String updateUserSql = "UPDATE \"user\" SET password = ?, enabled = ?, " +
                 "account_non_expired = ?, account_non_locked = ?, credentials_non_expired = ? " +
                 "WHERE id = ?";
@@ -155,7 +156,7 @@ public class AuthUserRepositoryJdbc implements AuthUserRepository {
     }
 
     @Override
-    public void remove(AuthUserEntity user) {
+    public void remove(@Nonnull AuthUserEntity user) {
         try (PreparedStatement userPs = holder(CFG.authJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM \"user\" WHERE id = ?");
              PreparedStatement authorityPS = holder(CFG.authJdbcUrl()).connection().prepareStatement(

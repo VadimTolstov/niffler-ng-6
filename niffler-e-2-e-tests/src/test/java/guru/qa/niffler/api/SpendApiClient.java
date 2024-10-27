@@ -4,6 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -26,7 +27,7 @@ public class SpendApiClient {
             .build();
 
     private final SpendApi spendApi = retrofit.create(SpendApi.class);
-
+    @Step("Send POST(\"internal/spends/add\") to niffler-spend")
     public @Nullable SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
@@ -48,7 +49,7 @@ public class SpendApiClient {
     public List<SpendJson> findSpendByUsernameAndDescription(String username, String description) {
         throw new UnsupportedOperationException("FindSpendByUsernameAndDescription a spends is not supported by API");
     }
-
+    @Step("Send DELETE(\"/internal/spends/remove\") to niffler-spend")
     public void deleteSpend(SpendJson spend) {
         final Response<Void> response;
         try {
@@ -61,6 +62,7 @@ public class SpendApiClient {
         assertEquals(HttpStatus.SC_OK, response.code());
     }
 
+    @Step("Send PATCH(\"/internal/spends/edit\") to niffler-spend")
     public @Nullable SpendJson updateSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
@@ -74,6 +76,7 @@ public class SpendApiClient {
         return response.body();
     }
 
+    @Step("Send GET(\"/internal/spends/{id}\") to niffler-spend")
     public @Nullable SpendJson getSpend(String id, String username) {
         final Response<SpendJson> response;
         try {
@@ -87,6 +90,7 @@ public class SpendApiClient {
         return response.body();
     }
 
+    @Step("Send GET(\"/internal/spends/all\") to niffler-spend")
     public @Nonnull List<SpendJson> getSpends(String username,
                                               @Nullable CurrencyValues filterCurrency,
                                               @Nullable Date from,
@@ -105,6 +109,7 @@ public class SpendApiClient {
                 : Collections.emptyList();
     }
 
+    @Step("Send DELETE(\"/internal/spends/remove\") to niffler-spend")
     public void deleteSpends(String username, List<String> ids) {
         final Response<Void> response;
         try {
@@ -117,6 +122,7 @@ public class SpendApiClient {
         assertEquals(HttpStatus.SC_OK, response.code());
     }
 
+    @Step("Send POST(\"/internal/categories/add\") to niffler-spend")
     public @Nullable CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
@@ -130,6 +136,7 @@ public class SpendApiClient {
         return response.body();
     }
 
+    @Step("Send PATCH(\"/internal/categories/update\") to niffler-spend")
     public @Nullable CategoryJson updateCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
@@ -155,6 +162,7 @@ public class SpendApiClient {
         throw new UnsupportedOperationException("Deleting a category is not supported by API");
     }
 
+    @Step("Send GET(\"/internal/categories/all\") to niffler-spend")
     public @Nonnull List<CategoryJson> getCategories(String username, boolean excludeArchived) {
         final Response<List<CategoryJson>> response;
         try {

@@ -2,6 +2,7 @@ package guru.qa.niffler.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import guru.qa.niffler.config.Config;
+import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
 import retrofit2.Retrofit;
@@ -26,7 +27,8 @@ public class GhApiClient {
 
     private final GhApi ghApi = retrofit.create(GhApi.class);
 
-    public String issueState(@Nonnull String issueNumber) {
+    @Step("Send GET(\"repos/VadimTolstov/niffler-ng-6/issues/{issue_number}\") to github api")
+    public String issueState( String issueNumber) {
         final Response<JsonNode> response;
         try {
             response = ghApi.issue(

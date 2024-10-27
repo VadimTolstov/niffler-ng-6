@@ -6,6 +6,7 @@ import guru.qa.niffler.data.entity.spend.SpendEntity;
 import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.data.repository.SpendRepository;
 
+import javax.annotation.Nonnull;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -21,7 +22,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     private static final Config CFG = Config.getInstance();
 
     @Override
-    public SpendEntity create(SpendEntity spend) {
+    public SpendEntity create(@Nonnull SpendEntity spend) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO spend (username, spend_date, currency, amount, description, category_id) " +
                         "VALUES (?, ?, ?, ?, ?, ?)",
@@ -51,7 +52,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public SpendEntity update(SpendEntity spend) {
+    public SpendEntity update(@Nonnull SpendEntity spend) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "UPDATE spend SET spend_date = ?, currency = ?, amount = ?, description = ? WHERE id = ?")) {
             ps.setDate(1, new java.sql.Date(spend.getSpendDate().getTime()));
@@ -67,7 +68,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity createCategory(CategoryEntity category) {
+    public CategoryEntity createCategory(@Nonnull CategoryEntity category) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "INSERT INTO category (username, name, archived) VALUES (?, ?, ?)",
                 PreparedStatement.RETURN_GENERATED_KEYS)) {
@@ -91,7 +92,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public CategoryEntity updateCategory(CategoryEntity category) {
+    public CategoryEntity updateCategory(@Nonnull CategoryEntity category) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "UPDATE category SET name = ?, username = ?, archived = ? WHERE id = ?")) {
             ps.setString(1, category.getName());
@@ -207,7 +208,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public void remove(SpendEntity spend) {
+    public void remove(@Nonnull SpendEntity spend) {
         try (PreparedStatement ps = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM spend WHERE id = ?")) {
             ps.setObject(1, spend.getId());
@@ -218,7 +219,7 @@ public class SpendRepositoryJdbc implements SpendRepository {
     }
 
     @Override
-    public void removeCategory(CategoryEntity category) {
+    public void removeCategory(@Nonnull CategoryEntity category) {
         try (PreparedStatement deletePs = holder(CFG.spendJdbcUrl()).connection().prepareStatement(
                 "DELETE FROM category WHERE id = ?")) {
             deletePs.setObject(1, category.getId());

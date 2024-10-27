@@ -8,6 +8,7 @@ import guru.qa.niffler.data.repository.UserdataUserRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 
+import javax.annotation.Nonnull;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -50,13 +51,13 @@ public class UserdataUserRepositoryHibernate implements UserdataUserRepository {
     }
 
     @Override
-    public void sendInvitation(UserEntity requester, UserEntity addressee) {
+    public void sendInvitation(UserEntity requester, @Nonnull UserEntity addressee) {
         entityManager.joinTransaction();
         addressee.addFriends(FriendshipStatus.PENDING, requester);
     }
 
     @Override
-    public void addFriend(UserEntity requester, UserEntity addressee) {
+    public void addFriend(@Nonnull UserEntity requester, UserEntity addressee) {
         entityManager.joinTransaction();
         requester.addFriends(FriendshipStatus.ACCEPTED, addressee);
         addressee.addFriends(FriendshipStatus.ACCEPTED, requester);
