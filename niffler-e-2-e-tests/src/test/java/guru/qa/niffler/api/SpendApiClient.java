@@ -4,6 +4,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.service.RestClient;
 import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
@@ -19,14 +20,15 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendApiClient {
+public class SpendApiClient extends RestClient {
 
-    private final Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl(Config.getInstance().spendUrl())
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
+    private final SpendApi spendApi;
 
-    private final SpendApi spendApi = retrofit.create(SpendApi.class);
+    public SpendApiClient() {
+        super(CFG.spendUrl());
+        this.spendApi = retrofit.create(SpendApi.class);
+    }
+
     @Step("Send POST(\"internal/spends/add\") to niffler-spend")
     public @Nullable SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
@@ -49,6 +51,7 @@ public class SpendApiClient {
     public List<SpendJson> findSpendByUsernameAndDescription(String username, String description) {
         throw new UnsupportedOperationException("FindSpendByUsernameAndDescription a spends is not supported by API");
     }
+
     @Step("Send DELETE(\"/internal/spends/remove\") to niffler-spend")
     public void deleteSpend(SpendJson spend) {
         final Response<Void> response;
