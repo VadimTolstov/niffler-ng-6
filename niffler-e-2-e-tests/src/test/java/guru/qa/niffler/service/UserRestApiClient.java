@@ -1,8 +1,7 @@
 package guru.qa.niffler.service;
 
-import guru.qa.niffler.api.UserApiClient;
+import guru.qa.niffler.api.UserDataApiClient;
 import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.utils.RandomDataUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,7 +9,7 @@ import java.util.List;
 import static guru.qa.niffler.utils.RandomDataUtils.*;
 
 public class UserRestApiClient implements UsersClient {
-    private UserApiClient userApiClient = new UserApiClient();
+    private final UserDataApiClient userDataApiClient = new UserDataApiClient();
 
     @Override
     public UserJson createUser(String username, String password) {
@@ -18,12 +17,12 @@ public class UserRestApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> createIncomeInvitations(UserJson targetUser, int count) {
+    public List<UserJson> addIncomeInvitations(UserJson targetUser, int count) {
         List<UserJson> users = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             final String username = randomUsername();
             users.add(
-                    userApiClient.sendInvitation(
+                    userDataApiClient.sendInvitation(
                             createUser(username, "12345").username(),
                             targetUser.username()
                     )
@@ -33,12 +32,12 @@ public class UserRestApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> createOutcomeInvitations(UserJson targetUser, int count) {
+    public List<UserJson> addOutcomeInvitations(UserJson targetUser, int count) {
         List<UserJson> users = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             final String username = randomUsername();
             users.add(
-                    userApiClient.sendInvitation(
+                    userDataApiClient.sendInvitation(
                             targetUser.username(),
                             createUser(username, "12345").username()
                     )
@@ -48,16 +47,16 @@ public class UserRestApiClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> createFriends(UserJson targetUser, int count) {
+    public List<UserJson> addFriends(UserJson targetUser, int count) {
         List<UserJson> users = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             final String username = randomUsername();
             UserJson user = createUser(username, "12345");
-            userApiClient.sendInvitation(
+            userDataApiClient.sendInvitation(
                     user.username(),
                     targetUser.username()
             );
-            userApiClient.acceptInvitation(user.username(), targetUser.username());
+            userDataApiClient.acceptInvitation(user.username(), targetUser.username());
             users.add(user);
         }
         return users;

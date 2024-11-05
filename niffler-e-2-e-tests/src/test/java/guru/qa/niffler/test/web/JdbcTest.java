@@ -114,9 +114,9 @@ public class JdbcTest {
                 randomUsername(),
                 "12345"
         );
-        usersDbClient.createIncomeInvitations(user, 1);
-        usersDbClient.createOutcomeInvitations(user, 1);
-        usersDbClient.createFriends(user, 1);
+        usersDbClient.addIncomeInvitations(user, 1);
+        usersDbClient.addOutcomeInvitations(user, 1);
+        usersDbClient.addFriends(user, 1);
         System.out.println(user);
     }
 }
