@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface SpendApi {
 
-    @POST("internal/spends/add")
+    @POST("/internal/spends/add")
     Call<SpendJson> addSpend(@Body SpendJson spend);
 
     @PATCH("/internal/spends/edit")

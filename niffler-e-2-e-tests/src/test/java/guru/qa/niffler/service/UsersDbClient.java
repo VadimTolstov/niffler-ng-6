@@ -51,7 +51,7 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> createIncomeInvitations(UserJson targetUser, int count) {
+    public List<UserJson> addIncomeInvitations(UserJson targetUser, int count) {
         List<UserJson> users = new ArrayList<>();
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findById(
@@ -73,7 +73,7 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> createOutcomeInvitations(UserJson targetUser, int count) {
+    public List<UserJson> addOutcomeInvitations(UserJson targetUser, int count) {
         List<UserJson> users = new ArrayList<>();
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findById(
@@ -95,7 +95,7 @@ public class UsersDbClient implements UsersClient {
     }
 
     @Override
-    public List<UserJson> createFriends(UserJson targetUser, int count) {
+    public List<UserJson> addFriends(UserJson targetUser, int count) {
         List<UserJson> users = new ArrayList<>();
         if (count > 0) {
             UserEntity targetEntity = userdataUserRepository.findById(

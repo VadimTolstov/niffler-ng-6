@@ -1,6 +1,7 @@
 package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.page.BasePage;
 import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
@@ -9,13 +10,16 @@ import java.time.format.DateTimeFormatter;
 
 import static com.codeborne.selenide.Selenide.$;
 
-public class Calendar {
-
-    private final SelenideElement self = $("input[name='date']");
+public class Calendar <T extends BasePage<?>> extends BaseComponent<T>{
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
+    public Calendar(SelenideElement self, T page) {
+        super(self, page);
+    }
+
     @Step("Выбор дату в календаре: {date}")
-    public void selectDateInCalendar(@Nonnull LocalDate date){
+    public T selectDateInCalendar(@Nonnull LocalDate date){
         self.setValue(date.format(formatter));
+        return getPage();
     }
 }

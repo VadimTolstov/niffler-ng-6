@@ -79,4 +79,17 @@ public class ProfileWebTest {
                 .clickSaveButton()
                 .shouldBeVisibleSaveChangesSuccessMessage();
     }
+    @User
+    @Test
+    void changeNameAndCheckAlertTest(UserJson user) {
+        String name = randomName();
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .getHeader()
+                .toProfilePage()
+                .setName(name)
+                .clickSaveButton()
+                .checkAlert("Profile successfully updated")
+                .checkName(name);
+    }
 }

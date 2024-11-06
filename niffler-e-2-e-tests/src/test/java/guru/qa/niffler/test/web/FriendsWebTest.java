@@ -46,7 +46,9 @@ public class FriendsWebTest {
                 .openFriendPage()
                 .verifyFriendTableContainsIncome(user.testData().income());
     }
-
+    @User(
+            income = 1
+    )
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)

@@ -9,7 +9,7 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static com.codeborne.selenide.Selenide.*;
 
 @ParametersAreNonnullByDefault
-public class RegisterPage {
+public class RegisterPage extends BasePage<RegisterPage>{
     private final SelenideElement
             usernameInput = $("input[name='username']"),
             passwordInput = $("input[name='password']"),

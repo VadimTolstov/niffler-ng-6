@@ -5,6 +5,7 @@ import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.service.RestClient;
+import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
@@ -20,7 +21,7 @@ import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
-public class SpendApiClient extends RestClient {
+public class SpendApiClient extends RestClient implements SpendClient {
 
     private final SpendApi spendApi;
 
@@ -29,6 +30,7 @@ public class SpendApiClient extends RestClient {
         this.spendApi = retrofit.create(SpendApi.class);
     }
 
+    @Override
     @Step("Send POST(\"internal/spends/add\") to niffler-spend")
     public @Nullable SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
@@ -40,18 +42,21 @@ public class SpendApiClient extends RestClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_CREATED, response.code());
-        return response.body();
+        return Objects.requireNonNull(response.body(), "Ответ API вернул null при создании траты");
     }
 
+    @Override
 
     public Optional<SpendJson> findSpendById(UUID id) {
         throw new UnsupportedOperationException("FindSpendById a spend is not supported by API");
     }
 
+    @Override
     public List<SpendJson> findSpendByUsernameAndDescription(String username, String description) {
         throw new UnsupportedOperationException("FindSpendByUsernameAndDescription a spends is not supported by API");
     }
 
+    @Override
     @Step("Send DELETE(\"/internal/spends/remove\") to niffler-spend")
     public void deleteSpend(SpendJson spend) {
         final Response<Void> response;
@@ -65,6 +70,7 @@ public class SpendApiClient extends RestClient {
         assertEquals(HttpStatus.SC_OK, response.code());
     }
 
+    @Override
     @Step("Send PATCH(\"/internal/spends/edit\") to niffler-spend")
     public @Nullable SpendJson updateSpend(SpendJson spend) {
         final Response<SpendJson> response;
@@ -78,6 +84,7 @@ public class SpendApiClient extends RestClient {
         assertEquals(HttpStatus.SC_OK, response.code());
         return response.body();
     }
+
 
     @Step("Send GET(\"/internal/spends/{id}\") to niffler-spend")
     public @Nullable SpendJson getSpend(String id, String username) {
@@ -125,6 +132,7 @@ public class SpendApiClient extends RestClient {
         assertEquals(HttpStatus.SC_OK, response.code());
     }
 
+    @Override
     @Step("Send POST(\"/internal/categories/add\") to niffler-spend")
     public @Nullable CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
@@ -136,9 +144,10 @@ public class SpendApiClient extends RestClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return Objects.requireNonNull(response.body(), "Ответ API вернул null при создании категории");
     }
 
+    @Override
     @Step("Send PATCH(\"/internal/categories/update\") to niffler-spend")
     public @Nullable CategoryJson updateCategory(CategoryJson category) {
         final Response<CategoryJson> response;
@@ -153,14 +162,17 @@ public class SpendApiClient extends RestClient {
         return response.body();
     }
 
+    @Override
     public Optional<CategoryJson> findCategoryById(UUID id) {
         throw new UnsupportedOperationException("FindCategoryById a category is not supported by API");
     }
 
+    @Override
     public Optional<CategoryJson> findCategoryByUsernameAndCategoryName(String username, String name) {
         throw new UnsupportedOperationException("FindCategoryByUsernameAndCategoryName a category is not supported by API");
     }
 
+    @Override
     public void deleteCategory(CategoryJson category) {
         throw new UnsupportedOperationException("Deleting a category is not supported by API");
     }

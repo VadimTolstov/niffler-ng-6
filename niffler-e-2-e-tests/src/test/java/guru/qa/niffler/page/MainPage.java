@@ -16,12 +16,11 @@ import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
-public class MainPage {
+public class MainPage extends BasePage<MainPage> {
     @Getter
-    private final Header header = new Header();
+    private final SpendingTable<MainPage> spendingTable = new SpendingTable<>($(".MuiTableContainer-root"), this);
     @Getter
-    private final SpendingTable spendingTable = new SpendingTable();
-    private final SearchField searchField = new SearchField();
+    private final SearchField<MainPage> searchField = new SearchField<>($("input[placeholder='Search']"), this);
     private final SelenideElement spendings = $("#spendings");
     private final SelenideElement statistics = $("#stat");
 
