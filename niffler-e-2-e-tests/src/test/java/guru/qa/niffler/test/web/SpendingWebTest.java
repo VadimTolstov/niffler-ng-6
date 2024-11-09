@@ -35,7 +35,7 @@ public class SpendingWebTest {
                     amount = 79990
             )
     )
-    @DisabledByIssue("3")
+    @DisabledByIssue("2")
     @Test
     void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
         final String newDescription = "Обучение Niffler Next Generation1";
@@ -83,6 +83,7 @@ public class SpendingWebTest {
                 .setSpendingAmount("10")
                 .getCalendar()
                 .selectDateInCalendar(LocalDate.now())
+                .save()
                 .checkAlert("New spending is successfully created");
         new MainPage().checkThatTableContainsSpending(description);
     }

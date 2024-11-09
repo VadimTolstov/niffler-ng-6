@@ -25,8 +25,9 @@ public class EditSpendingPage extends BasePage<EditSpendingPage> {
     }
 
     @Step("Сохранить изменения")
-    public void save() {
+    public EditSpendingPage save() {
         saveBtn.click();
+        return this;
     }
 
     @Step("Ввести название категории: {category}")

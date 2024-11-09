@@ -23,43 +23,44 @@ public class ProfileWebTest {
 
     private static final Config CFG = Config.getInstance();
 
-    @User(spendings = @Spending(
-            category = "Почти",
-            description = "Обучение Advanced 2.0",
+    @User(
+            spendings = @Spending(
+            category = "Обучение41",
+            description = "Обучение Advanced 9.0",
             amount = 79990
     ),
-            username = "books",
+
             categories = @Category(
+                    name = "Не обучение12",
                     archived = true
             )
 
     )
     @Test
-    void archivedCategoryShouldPresentInCategoriesList(CategoryJson category) {
+    void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(category.username(), "12345")
+                .login(user.username(), "12345")
                 .openProfilePage()
-                .categoryShouldNotBeVisible(category.name())
+                .categoryShouldNotBeVisible(user.testData().categories().get(0).name())
                 .showArchivedCategories()
-                .categoryShouldBeVisible(category.name());
+                .categoryShouldBeVisible(user.testData().categories().get(0).name());
     }
 
     @User(
-            username = "books",
             categories = @Category(
                     archived = false
             ),
             spendings = @Spending(
-                    category = "Обучение",
-                    description = "Обучение Advanced 2.0",
+                    category = "Обучение42",
+                    description = "Обучение Advanced 5.0",
                     amount = 79990
             )
     )
     @Test
-    void activeCategoryShouldPresentInCategoriesList(CategoryJson category) {
+    void activeCategoryShouldPresentInCategoriesList(UserJson user) {
         String name = randomName();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(category.username(), "12345")
+                .login(user.username(), "12345")
                 .getHeader()
                 .toProfilePage()
                 .setName(name)

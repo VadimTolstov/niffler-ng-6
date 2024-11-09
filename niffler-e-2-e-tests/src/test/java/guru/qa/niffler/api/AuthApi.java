@@ -31,7 +31,7 @@ public interface AuthApi {
     Call<Void> login(
             @Field("username") String username,
             @Field("password") String password,
-            @Field("_csrf") String _csrf
+            @Field("_csrf") String csrf
     );
 
     @GET("/register")
@@ -43,6 +43,6 @@ public interface AuthApi {
             @Field("username") String username,
             @Field("password") String password,
             @Field("passwordSubmit") String passwordSubmit,
-            @Field("_csrf") String _csrf
+            @Field("_csrf") String csrf
     );
 }

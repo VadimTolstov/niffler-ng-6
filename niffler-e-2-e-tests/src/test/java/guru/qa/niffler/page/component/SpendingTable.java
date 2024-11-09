@@ -68,6 +68,6 @@ public class SpendingTable <T extends BasePage<?>> extends BaseComponent<T> {
 
     @Step("Проверить, что заголовок таблицы виден")
     public void titleIsVisible() {
-        self.$("h2").shouldHave(text("History of Spendings"));
+        $("#spendings h2").shouldHave(text("History of Spendings"));
     }
 }
