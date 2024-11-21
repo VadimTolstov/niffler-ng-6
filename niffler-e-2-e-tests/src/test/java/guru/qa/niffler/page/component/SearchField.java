@@ -6,28 +6,41 @@ import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
-import java.util.Objects;
+
+import static com.codeborne.selenide.Condition.empty;
+import static com.codeborne.selenide.Condition.not;
+import static com.codeborne.selenide.Selenide.$;
 
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class SearchField <T extends BasePage<?>> extends BaseComponent<T> {
-   public SearchField(SelenideElement searchFieldElement, T page) {
-        super(searchFieldElement, page);
+public class SearchField extends BaseComponent<SearchField> {
+    public SearchField(@Nonnull SelenideElement self) {
+        super(self);
     }
 
+    public SearchField() {
+        super($("input[aria-label='search']"));
+    }
+
+    private final SelenideElement clearSearchInputBtn = $("#input-clear");
+
+
     @Step("Поиск по запросу: {query}")
-    public SearchField<T> search(String query) {
+    @Nonnull
+    public SearchField search(String query) {
+        clearIfNotEmpty();
         self.setValue(query).pressEnter();
         return this;
     }
 
     @Step("Очистить поле поиска, если не пустое")
-    public SearchField<T> clearIfNotEmpty() {
-        if (!Objects.requireNonNull(self.getValue()).isEmpty()) {
-            self.clear();
+    @Nonnull
+    public SearchField clearIfNotEmpty() {
+        if (self.is(not(empty))) {
+            clearSearchInputBtn.click();
+            self.should(empty);
         }
         return this;
     }
-
 }

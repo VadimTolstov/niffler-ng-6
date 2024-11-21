@@ -1,8 +1,6 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
-import guru.qa.niffler.config.Config;
-import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
@@ -19,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -48,10 +45,10 @@ public class SpendingWebTest {
         final String newDescription = "Обучение Niffler Next Generation1";
 
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .login(spend.username(), "12345")
+                .fillLoginPage(spend.username(), "12345")
                 .editSpending(spend.description())
                 .setNewSpendingDescription(newDescription)
-                .save();
+                .saveSpending();
 
         new MainPage().checkThatTableContainsSpending(newDescription);
     }
@@ -63,15 +60,15 @@ public class SpendingWebTest {
         String description = randomSentence(2);
 
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .getHeader()
                 .addSpendingPage()
                 .setSpendingCategory(category)
                 .setNewSpendingDescription(description)
                 .setSpendingAmount("10")
                 .getCalendar()
-                .selectDateInCalendar(LocalDate.now());
-        new EditSpendingPage().save();
+                .enterDateInCalendar(LocalDate.now());
+        new EditSpendingPage().saveSpending();
         new MainPage().checkThatTableContainsSpending(description);
     }
 
@@ -82,16 +79,16 @@ public class SpendingWebTest {
         String description = randomSentence(2);
 
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .getHeader()
                 .addSpendingPage()
                 .setSpendingCategory(category)
                 .setNewSpendingDescription(description)
                 .setSpendingAmount("10")
                 .getCalendar()
-                .selectDateInCalendar(LocalDate.now())
+                .enterDateInCalendar(LocalDate.now())
                 .save()
-                .checkAlert("New spending is successfully created");
+                .checkAlertMessage("New spending is successfully created");
         new MainPage().checkThatTableContainsSpending(description);
     }
 
@@ -105,7 +102,7 @@ public class SpendingWebTest {
     @ScreenShotTest("img/expected-stat.png")
     void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException, InterruptedException {
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .login(user.username(), user.testData().password());
+                .fillLoginPage(user.username(), user.testData().password());
 
 BufferedImage actual = ImageIO.read($("canvas[role='img']").screenshot());
 

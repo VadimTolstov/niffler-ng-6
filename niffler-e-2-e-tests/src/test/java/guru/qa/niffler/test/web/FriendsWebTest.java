@@ -6,6 +6,7 @@ import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.Test;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -19,10 +20,14 @@ public class FriendsWebTest {
     @User(friends = 1)
     @Test
     void friendShouldBePresentInFriendsTable(UserJson user) {
+        final String friendUsername = user.testData().friendsUsernames()[0];
+
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
-                .openFriendPage()
-                .verifyFriendsTableContainsUser(user.testData().friends());
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getHeader()
+                .toFriendsPage()
+                .checkExistingFriends(friendUsername);
 
     }
 
@@ -30,7 +35,7 @@ public class FriendsWebTest {
     @Test
     void friendTableShouldBeEmptyForNewUser(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .openFriendPage()
                 .verifyFriendsTableShouldBeEmpty();
     }
@@ -39,7 +44,7 @@ public class FriendsWebTest {
     @Test
     void incomeInvitationBePresentInFriendsTable(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .openFriendPage()
                 .verifyFriendTableContainsIncome(user.testData().income());
     }
@@ -50,7 +55,7 @@ public class FriendsWebTest {
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .openAllPeople()
                 .verifyAllPeopleTableContainsOutcome(user.testData().outcome());
     }
@@ -61,7 +66,7 @@ public class FriendsWebTest {
     @Test
     void shouldAcceptFriendRequest(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .openFriendPage()
                 .acceptFriend(user.username())
                 .verifyFriendAdded(user.testData().income().getFirst());
@@ -73,7 +78,7 @@ public class FriendsWebTest {
     @Test
     void shouldDeclineFriendRequest(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .openFriendPage()
                 .declineFriend(user.username())
                 .verifyFriendsTableShouldBeEmpty();

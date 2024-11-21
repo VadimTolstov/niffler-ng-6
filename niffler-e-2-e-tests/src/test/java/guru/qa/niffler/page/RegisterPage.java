@@ -1,85 +1,86 @@
 package guru.qa.niffler.page;
 
-import com.codeborne.selenide.Condition;
-import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static com.codeborne.selenide.Selenide.*;
+import static com.codeborne.selenide.Condition.text;
+import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class RegisterPage extends BasePage<RegisterPage>{
-    private final SelenideElement
-            usernameInput = $("input[name='username']"),
-            passwordInput = $("input[name='password']"),
-            passwordSubmitInput = $("input[name='passwordSubmit']"),
-            submitButton = $("button[type='submit']"),
-            hrefLogIn = $("a[class='form__link']"),
-            successRegisterMessage = $(".form__paragraph"),
-            signInHref = $(".form__submit"),
-            header = $(".header"),
-            brand = $(".logo-section__text");
+public class RegisterPage extends BasePage<RegisterPage> {
 
-    private final ElementsCollection showPassword = $$("button[class='form__password-button']");
-    private final ElementsCollection checkShowPassword = $$(".form__password-button_active");
+    public static final String URL = CFG.authUrl() + "register";
 
+    private final SelenideElement usernameInput = $("input[name='username']");
+    private final SelenideElement passwordInput = $("input[name='password']");
+    private final SelenideElement passwordSubmitInput = $("input[name='passwordSubmit']");
+    private final SelenideElement submitButton = $("button[type='submit']");
+    private final SelenideElement proceedLoginButton = $(".form_sign-in");
+    private final SelenideElement errorContainer = $(".form__error");
+
+    @Step("Заполните страницу регистрации учетными данными: username: {0}, password: {1}, submit password: {2}")
+    @Nonnull
+    public RegisterPage fillRegisterPage(String login, String password, String passwordSubmit) {
+        setUsername(login);
+        setPassword(password);
+        setPasswordSubmit(passwordSubmit);
+        return this;
+    }
+
+    @Step("Ввести username: {0}")
+    @Nonnull
     public RegisterPage setUsername(String username) {
         usernameInput.setValue(username);
         return this;
     }
 
+    @Step("Ввести password: {0}")
+    @Nonnull
     public RegisterPage setPassword(String password) {
         passwordInput.setValue(password);
         return this;
     }
 
-    public RegisterPage setPasswordSubmit(String passwordSubmit) {
-        passwordSubmitInput.setValue(passwordSubmit);
+    @Step("Подтвердить password: {0}")
+    @Nonnull
+    public RegisterPage setPasswordSubmit(String password) {
+        passwordSubmitInput.setValue(password);
         return this;
     }
 
-    public RegisterPage submitRegistration() {
+    @Step("Отправить заявку на регистрацию и перейти на страницу авторизации")
+    @Nonnull
+    public LoginPage successSubmit() {
+        submitButton.click();
+        proceedLoginButton.click();
+        return new LoginPage();
+    }
+
+    @Step("Нажать на кнопку регистрации")
+    @Nonnull
+    public RegisterPage errorSubmit() {
         submitButton.click();
         return this;
     }
 
-    public LoginPage openLogIn() {
-        hrefLogIn.click();
-        return new LoginPage();
-    }
-
-    public RegisterPage shouldErrorMessage(String value) {
-        $x(String.format("//span[contains(text(),'%s')]", value))
-                .shouldHave(Condition.visible)
-                .shouldHave(Condition.text(value));
+    @Step("Проверить, что страница регистрации загрузилась")
+    @Override
+    @Nonnull
+    public RegisterPage checkThatPageLoaded() {
+        usernameInput.should(visible);
+        passwordInput.should(visible);
+        passwordSubmitInput.should(visible);
         return this;
     }
 
-    public RegisterPage shouldSuccessRegister(String value) {
-        successRegisterMessage.shouldHave(Condition.visible)
-                .shouldHave(Condition.text(value));
-        return this;
-    }
-
-    public RegisterPage SignInAuthorizationPage() {
-        signInHref.click();
-        return this;
-    }
-
-    public RegisterPage checkTextHeader(String value) {
-        header.shouldHave(Condition.visible, Condition.text(value));
-        return this;
-    }
-
-    public RegisterPage checkTextBrand(String value) {
-        brand.shouldHave(Condition.visible, Condition.text(value));
-        return this;
-    }
-
-    public RegisterPage showPassword() {
-        showPassword.forEach(SelenideElement::click);
-        checkShowPassword.forEach(element -> element.shouldHave(Condition.visible));
+    @Step("Проверить, что ошибка содержит текст: {errorMessage}")
+    @Nonnull
+    public RegisterPage checkAlertMessage(String errorMessage) {
+        errorContainer.shouldHave(text(errorMessage));
         return this;
     }
 }

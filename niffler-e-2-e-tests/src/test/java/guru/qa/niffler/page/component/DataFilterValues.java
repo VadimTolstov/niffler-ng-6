@@ -1,5 +1,9 @@
 package guru.qa.niffler.page.component;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public enum DataFilterValues {
-    ALL, MONTH, WEEK, TODAY
+    TODAY("Today"), WEEK("last week"), MONTH("Last month");
+    public final String text;
 }

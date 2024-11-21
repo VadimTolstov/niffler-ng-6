@@ -6,12 +6,9 @@ import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.jupiter.extension.BrowserExtension;
-import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -39,7 +36,7 @@ public class ProfileWebTest {
     @Test
     void archivedCategoryShouldPresentInCategoriesList(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), "12345")
+                .fillLoginPage(user.username(), "12345")
                 .openProfilePage()
                 .categoryShouldNotBeVisible(user.testData().categories().get(0).name())
                 .showArchivedCategories()
@@ -60,7 +57,7 @@ public class ProfileWebTest {
     void activeCategoryShouldPresentInCategoriesList(UserJson user) {
         String name = randomName();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), "12345")
+                .fillLoginPage(user.username(), "12345")
                 .getHeader()
                 .toProfilePage()
                 .setName(name)
@@ -73,7 +70,7 @@ public class ProfileWebTest {
     void shouldUpdateProfileName(UserJson user) {
         String name = randomName();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .getHeader()
                 .toProfilePage()
                 .setName(name)
@@ -85,12 +82,12 @@ public class ProfileWebTest {
     void changeNameAndCheckAlertTest(UserJson user) {
         String name = randomName();
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .login(user.username(), user.testData().password())
+                .fillLoginPage(user.username(), user.testData().password())
                 .getHeader()
                 .toProfilePage()
                 .setName(name)
                 .clickSaveButton()
-                .checkAlert("Profile successfully updated")
+                .checkAlertMessage("Profile successfully updated")
                 .checkName(name);
     }
 }
