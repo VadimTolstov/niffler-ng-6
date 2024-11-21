@@ -1,14 +1,17 @@
 package guru.qa.niffler.page;
 
+import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 
+import static com.codeborne.selenide.CollectionCondition.textsInAnyOrder;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
 import static com.codeborne.selenide.Selenide.$;
+import static com.codeborne.selenide.Selenide.$$;
 
 @ParametersAreNonnullByDefault
 public class LoginPage extends BasePage<LoginPage> {
@@ -18,7 +21,7 @@ public class LoginPage extends BasePage<LoginPage> {
     private final SelenideElement passwordInput = $("input[name='password']");
     private final SelenideElement submitButton = $("button[type='submit']");
     private final SelenideElement registerButton = $(".form__register");
-    private final SelenideElement errorContainer = $(".form__error");
+    private final ElementsCollection errorContainer = $$(".form__error");
     private final SelenideElement showPassword = $("button[class='form__password-button']");
     private final SelenideElement checkShowPassword = $(".form__password-button_active");
 
@@ -68,8 +71,8 @@ public class LoginPage extends BasePage<LoginPage> {
 
     @Step("Проверьте ошибку на странице: {error}")
     @Nonnull
-    public LoginPage checkError(String error) {
-        errorContainer.shouldHave(text(error));
+    public LoginPage checkError(String... errors) {
+        errorContainer.shouldHave(textsInAnyOrder(errors));
         return this;
     }
 

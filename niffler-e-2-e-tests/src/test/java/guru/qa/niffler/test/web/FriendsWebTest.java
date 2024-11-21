@@ -52,43 +52,50 @@ public class FriendsWebTest {
                 .checkExistingUser(income);
     }
 
-//    @User(
-//            income = 1
-//    )
-//    @Test
-//    void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
-//
-//        Selenide.open(LoginPage.URL, LoginPage.class)
-//                .fillLoginPage(user.username(), user.testData().password())
-//                .submit(new MainPage())
-//                .getHeader()
-//                .toAllPeoplesPage()
-//                .checkInvitationSentToUser(outcomeInvitationUsername);
-//    }
+    @User(
+            outcome = 1
+    )
+    @Test
+    void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
+        final String outcome = user.testData().outcome().get(0);
+
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getHeader()
+                .toAllPeoplesPage()
+                .checkInvitationSentToUser(outcome);
+    }
 
     @User(
             income = 1
     )
     @Test
     void shouldAcceptFriendRequest(UserJson user) {
+        final String income = user.testData().income().get(0);
+
         Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())
                 .submit(new MainPage())
                 .getHeader()
                 .toFriendsPage()
-                .acceptFriendInvitationFromUser(user.username())
+                .acceptFriendInvitationFromUser(income)
                 .checkExistingFriendsCount(1);
     }
 
-//    @User(
-//            income = 1
-//    )
-//    @Test
-//    void shouldDeclineFriendRequest(UserJson user) {
-//        Selenide.open(CFG.frontUrl(), LoginPage.class)
-//                .fillLoginPage(user.username(), user.testData().password())
-//                .openFriendPage()
-//                .declineFriend(user.username())
-//                .verifyFriendsTableShouldBeEmpty();
-//    }
+    @User(
+            income = 1
+    )
+    @Test
+    void shouldDeclineFriendRequest(UserJson user) {
+        final String income = user.testData().income().get(0);
+
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getHeader()
+                .toFriendsPage()
+                .declineFriendInvitationFromUser(income)
+                .checkExistingFriendsCount(0);
+    }
 }

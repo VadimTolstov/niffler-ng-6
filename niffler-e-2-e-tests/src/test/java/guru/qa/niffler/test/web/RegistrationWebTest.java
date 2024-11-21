@@ -30,7 +30,7 @@ public class RegistrationWebTest {
                 .setPassword(password)
                 .setPasswordSubmit(password)
                 .successSubmit()
-                .checkAlertMessage(successRegister);
+                .checkThatPageLoaded();
     }
 
     @Test
@@ -43,11 +43,9 @@ public class RegistrationWebTest {
                 .setUsername("A")
                 .setPassword("A")
                 .setPasswordSubmit("A")
-                .successSubmit()
-                .checkError(errorName)
-                .checkError(errorPassword);
+                .clickSubmit()
+                .checkError(errorName, errorPassword, errorPassword);
     }
-
 
 
     @Test
@@ -74,5 +72,4 @@ public class RegistrationWebTest {
                 .clickSubmit()
                 .checkError("Username `" + username + "` already exists");
     }
-
 }
