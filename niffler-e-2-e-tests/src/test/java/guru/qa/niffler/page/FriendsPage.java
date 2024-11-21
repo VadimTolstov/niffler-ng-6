@@ -77,7 +77,7 @@ public class FriendsPage extends BasePage<FriendsPage> {
     @Step("Принять приглашение от пользователя: {username}")
     @Nonnull
     public FriendsPage acceptFriendInvitationFromUser(String username) {
-        SelenideElement friendRow = requestsTable.$$("tr").find(text(username));
+        SelenideElement friendRow = requestsTable.$("tr td div p").shouldHave(text(username));
         friendRow.$(byText("Accept")).click();
         return this;
     }

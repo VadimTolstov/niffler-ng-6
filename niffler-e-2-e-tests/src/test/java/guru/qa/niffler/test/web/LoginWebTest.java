@@ -53,7 +53,7 @@ public class LoginWebTest {
     void userAuthorization(UserJson user) {
         Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())
-                .submit(new MainPage()
-                        .checkThatPageLoaded());
+                .submit(new MainPage())
+                .checkThatPageLoaded();
     }
 }

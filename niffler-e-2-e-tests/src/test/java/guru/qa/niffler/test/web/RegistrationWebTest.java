@@ -4,9 +4,12 @@ import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
+import guru.qa.niffler.page.RegisterPage;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
 @WebTest
 public class RegistrationWebTest {
@@ -17,17 +20,17 @@ public class RegistrationWebTest {
     @Test
     @DisplayName("Регистрация нового пользователя")
     void successRegistration() {
-        String name = RandomDataUtils.randomUsername();
+        String name = randomUsername();
         String password = RandomDataUtils.randomPassword();
         String successRegister = "Congratulations! You've registered!";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickRegisterPage()
+                .clickRegisterPage(new RegisterPage())
                 .setUsername(name)
                 .setPassword(password)
                 .setPasswordSubmit(password)
-                .SignInAuthorizationPage()
-                .shouldSuccessRegister(successRegister);
+                .successSubmit()
+                .checkAlertMessage(successRegister);
     }
 
     @Test
@@ -36,44 +39,24 @@ public class RegistrationWebTest {
         String errorName = "Allowed username length should be from 3 to 50 characters";
         String errorPassword = "Allowed password length should be from 3 to 12 characters";
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickRegisterPage()
+                .clickRegisterPage(new RegisterPage())
                 .setUsername("A")
                 .setPassword("A")
                 .setPasswordSubmit("A")
-                .SignInAuthorizationPage()
-                .shouldErrorMessage(errorName)
-                .shouldErrorMessage(errorPassword);
+                .successSubmit()
+                .checkError(errorName)
+                .checkError(errorPassword);
     }
 
-    @Test
-    @DisplayName("Показать значения в полях Password, Submit password")
-    void openPassword() {
-        String password = RandomDataUtils.randomPassword();
 
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickRegisterPage()
-                .setPassword(password)
-                .setPasswordSubmit(password)
-                .showPassword();
-    }
 
     @Test
-    @DisplayName("Вернуться на страницу авторизации")
-    void goBackToTheAuthorizationPage() {
-
-        Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickRegisterPage()
-                .openLogIn()
-                .checkTextHeader(HEADER_LOGIN);
-    }
-
-    @Test
-    @DisplayName("Проверить отображения текста заголовка")
+    @DisplayName("Проверить что страница регистрации загружается")
     void checkingHeader() {
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickRegisterPage()
-                .checkTextHeader(HEADER);
+                .clickRegisterPage(new RegisterPage())
+                .checkThatPageLoaded();
     }
 
 
@@ -84,11 +67,12 @@ public class RegistrationWebTest {
         String password = "12345";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
-                .clickRegisterPage()
+                .clickRegisterPage(new RegisterPage())
                 .setUsername(username)
                 .setPassword(password)
                 .setPasswordSubmit(password)
-                .SignInAuthorizationPage()
-                .shouldErrorMessage("Username `" + username + "` already exists");
+                .clickSubmit()
+                .checkError("Username `" + username + "` already exists");
     }
+
 }

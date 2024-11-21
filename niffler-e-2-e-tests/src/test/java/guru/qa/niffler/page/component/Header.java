@@ -8,8 +8,6 @@ import io.qameta.allure.Step;
 
 import javax.annotation.Nonnull;
 
-import static com.codeborne.selenide.Selectors.byTagAndText;
-import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
 
@@ -43,7 +41,7 @@ public class Header extends BaseComponent<Header>{
 
     @Step("Перейти на страницу всех людей")
     @Nonnull
-    public PeoplePage toAllPeoplePage() {
+    public PeoplePage toAllPeoplesPage() {
         menuBtn.click();
         menuItems.findBy(Condition.text("All People")).click();
         return new PeoplePage();

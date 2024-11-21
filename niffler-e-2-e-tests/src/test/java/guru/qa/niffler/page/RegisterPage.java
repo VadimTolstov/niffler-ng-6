@@ -60,6 +60,13 @@ public class RegisterPage extends BasePage<RegisterPage> {
         return new LoginPage();
     }
 
+    @Step("Нажать кнопку Sing Up")
+    @Nonnull
+    public LoginPage clickSubmit() {
+        submitButton.click();
+        return new LoginPage();
+    }
+
     @Step("Нажать на кнопку регистрации")
     @Nonnull
     public RegisterPage errorSubmit() {

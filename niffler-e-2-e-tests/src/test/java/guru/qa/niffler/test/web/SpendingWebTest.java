@@ -11,6 +11,9 @@ import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.page.EditSpendingPage;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
+import guru.qa.niffler.page.RegisterPage;
+import guru.qa.niffler.page.component.StatComponent;
+import guru.qa.niffler.utils.RandomDataUtils;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.Test;
 
@@ -20,6 +23,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Date;
 
 import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
@@ -32,67 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SpendingWebTest {
 
     @User(
-            username = "books",
-            spendings = @Spending(
-                    category = "Тест",
-                    description = "Обучение Advanced 2.0",
-                    amount = 79990
-            )
-    )
-    @DisabledByIssue("2")
-    @Test
-    void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
-        final String newDescription = "Обучение Niffler Next Generation1";
-
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .fillLoginPage(spend.username(), "12345")
-                .editSpending(spend.description())
-                .setNewSpendingDescription(newDescription)
-                .saveSpending();
-
-        new MainPage().checkThatTableContainsSpending(newDescription);
-    }
-
-    @User
-    @Test
-    void addSpendTest(UserJson user) {
-        String category = randomCategoryName();
-        String description = randomSentence(2);
-
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .getHeader()
-                .addSpendingPage()
-                .setSpendingCategory(category)
-                .setNewSpendingDescription(description)
-                .setSpendingAmount("10")
-                .getCalendar()
-                .enterDateInCalendar(LocalDate.now());
-        new EditSpendingPage().saveSpending();
-        new MainPage().checkThatTableContainsSpending(description);
-    }
-
-    @User
-    @Test
-    void addSpendAndCheckAlertTest(UserJson user) {
-        String category = randomCategoryName();
-        String description = randomSentence(2);
-
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .getHeader()
-                .addSpendingPage()
-                .setSpendingCategory(category)
-                .setNewSpendingDescription(description)
-                .setSpendingAmount("10")
-                .getCalendar()
-                .enterDateInCalendar(LocalDate.now())
-                .save()
-                .checkAlertMessage("New spending is successfully created");
-        new MainPage().checkThatTableContainsSpending(description);
-    }
-
-    @User(
             spendings = @Spending(
                     category = "Обучение",
                     description = "Обучение Advanced 2.0",
@@ -102,13 +45,106 @@ public class SpendingWebTest {
     @ScreenShotTest("img/expected-stat.png")
     void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException, InterruptedException {
         Selenide.open(LoginPage.URL, LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password());
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage());
 
-BufferedImage actual = ImageIO.read($("canvas[role='img']").screenshot());
+        BufferedImage actual = ImageIO.read($("canvas[role='img']").screenshot());
 
         assertTrue(new ScreenDiffResult(
                 expected,
                 actual
         ), "Screen comparison failure");
+    }
+
+    @User(
+            spendings = @Spending(
+                    category = "Обучение",
+                    description = "Обучение Advanced 2.0",
+                    amount = 79990
+            )
+    )
+    @Test
+    void categoryDescriptionShouldBeChangedFromTable(UserJson user) {
+        final String newDescription = "Обучение Niffler Next Generation";
+
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getSpendingTable()
+                .editSpending("Обучение Advanced 2.0")
+                .setNewSpendingDescription(newDescription)
+                .saveSpending();
+
+        new MainPage().getSpendingTable()
+                .checkTableContains(newDescription);
+    }
+
+    @User
+    @Test
+    void shouldAddNewSpending(UserJson user) {
+        String category = "Friends";
+        int amount = 100;
+        Date currentDate = new Date();
+        String description = RandomDataUtils.randomSentence(3);
+
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getHeader()
+                .addSpendingPage()
+                .setNewSpendingCategory(category)
+                .setNewSpendingAmount(amount)
+                .setNewSpendingDate(currentDate)
+                .setNewSpendingDescription(description)
+                .saveSpending()
+                .checkAlertMessage("New spending is successfully created");
+
+        new MainPage().getSpendingTable()
+                .checkTableContains(description);
+    }
+
+    @User
+    @Test
+    void shouldNotAddSpendingWithEmptyCategory(UserJson user) {
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getHeader()
+                .addSpendingPage()
+                .setNewSpendingAmount(100)
+                .setNewSpendingDate(new Date())
+                .saveSpending()
+                .checkFormErrorMessage("Please choose category");
+    }
+
+    @User
+    @Test
+    void shouldNotAddSpendingWithEmptyAmount(UserJson user) {
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getHeader()
+                .addSpendingPage()
+                .setNewSpendingCategory("Friends")
+                .setNewSpendingDate(new Date())
+                .saveSpending()
+                .checkFormErrorMessage("Amount has to be not less then 0.01");
+    }
+
+    @User(
+            spendings = @Spending(
+                    category = "Обучение",
+                    description = "Обучение Advanced 2.0",
+                    amount = 79990
+            )
+    )
+    @Test
+    void deleteSpendingTest(UserJson user) {
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getSpendingTable()
+                .deleteSpending("Обучение Advanced 2.0")
+                .checkTableSize(0);
     }
 }
