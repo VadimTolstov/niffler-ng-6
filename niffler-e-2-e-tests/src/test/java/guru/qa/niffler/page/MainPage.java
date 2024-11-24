@@ -24,9 +24,6 @@ public class MainPage extends BasePage<MainPage> {
     protected final Header header = new Header();
     protected final SpendingTable spendingTable = new SpendingTable();
     protected final StatComponent statComponent = new StatComponent();
-//    private final SearchField searchField = new SearchField($("input[placeholder='Search']"));
-//    private final SelenideElement spendings = $("#spendings");
-//    private final SelenideElement statistics = $("#stat");
 
     @Nonnull
     public Header getHeader() {
@@ -43,46 +40,6 @@ public class MainPage extends BasePage<MainPage> {
         spendingTable.getSelf().scrollIntoView(true);
         return spendingTable;
     }
-
-//    @Step("Редактировать трату: {spendingDescription}")
-//    public EditSpendingPage editSpending(String spendingDescription) {
-//        searchField.search(spendingDescription);
-//        spendingTable.editSpending(spendingDescription);
-//        return new EditSpendingPage();
-//    }
-//
-//    @Step("Проверить, что компоненты главной страницы видны")
-//    public void verifyMainComponentsIsVisible() {
-//        statistics.shouldBe(visible);
-//        spendingTable.titleIsVisible();
-//    }
-//
-//    @Step("Проверить, что таблица трат содержит: {spendingDescription}")
-//    public void checkThatTableContainsSpending(String... spendingDescription) {
-//        for (String spend : spendingDescription) {
-//            searchField.search(spend);
-//            spendingTable.checkTableContains(spend);
-//            searchField.clearIfNotEmpty();
-//        }
-//    }
-//
-//    @Step("Открыть страницу всех людей")
-//    public PeoplePage openAllPeople() {
-//        header.toAllPeoplePage();
-//        return new PeoplePage();
-//    }
-//
-//    @Step("Открыть страницу профиля")
-//    public ProfilePage openProfilePage() {
-//        header.toProfilePage();
-//        return new ProfilePage();
-//    }
-//
-//    @Step("Открыть страницу друзей")
-//    public PeoplePage openFriendPage() {
-//        header.toFriendsPage();
-//        return new PeoplePage();
-//    }
 
     @Override
     @Nonnull
