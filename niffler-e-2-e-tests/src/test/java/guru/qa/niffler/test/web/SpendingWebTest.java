@@ -146,21 +146,4 @@ public class SpendingWebTest {
                 .saveSpending()
                 .checkFormErrorMessage("Amount has to be not less then 0.01");
     }
-
-//    @User(
-//            spendings = @Spending(
-//                    category = "Обучение",
-//                    description = "Обучение Advanced 2.0",
-//                    amount = 79990
-//            )
-//    )
-//    @Test
-//    void deleteSpendingTest(UserJson user) {
-//        Selenide.open(LoginPage.URL, LoginPage.class)
-//                .fillLoginPage(user.username(), user.testData().password())
-//                .submit(new MainPage())
-//                .getSpendingTable()
-//                .deleteSpending("Обучение Advanced 2.0")
-//                .checkTableSize(0);
-//    }
 }
