@@ -56,8 +56,8 @@ public class PeoplePage extends BasePage<PeoplePage> {
     @Step("Найти пользователя: {username}")
     @Nonnull
     public PeoplePage checkExistingUser(String username) {
-            searchInput.search(username);
-            peopleTable.$$("tr").find(text(username)).should(visible);
+        searchInput.search(username);
+        peopleTable.$$("tr").find(text(username)).should(visible);
         return this;
     }
 }

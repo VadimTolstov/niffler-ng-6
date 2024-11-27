@@ -3,21 +3,26 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.utils.ScreenDiffResult;
 import io.qameta.allure.Step;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Objects;
 
 import static com.codeborne.selenide.Condition.*;
 import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selenide.$;
 import static com.codeborne.selenide.Selenide.$$;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @ParametersAreNonnullByDefault
 public class ProfilePage extends BasePage<ProfilePage> {
@@ -139,6 +144,16 @@ public class ProfilePage extends BasePage<ProfilePage> {
     @Nonnull
     public ProfilePage submitProfile() {
         submitButton.click();
+        return this;
+    }
+
+    @Step("Проверьте, соответствует ли изображение аватара ожидаемому изображению")
+    public ProfilePage checkAvatarImg(BufferedImage expectedAvatar) throws IOException {
+        BufferedImage actual = ImageIO.read(Objects.requireNonNull($(".MuiAvatar-img").screenshot()));
+        assertFalse(new ScreenDiffResult(
+                actual,
+                expectedAvatar
+        ));
         return this;
     }
 }

@@ -17,6 +17,7 @@ import guru.qa.niffler.utils.RandomDataUtils;
 import guru.qa.niffler.utils.ScreenDiffResult;
 import org.junit.jupiter.api.Test;
 
+import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 
@@ -24,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.Objects;
 
 import static com.codeborne.selenide.Selenide.$;
 import static guru.qa.niffler.utils.RandomDataUtils.randomCategoryName;
@@ -42,21 +44,35 @@ public class SpendingWebTest {
                     amount = 79990
             )
     )
-    @ScreenShotTest("img/expected-stat.png")
-    void checkStatComponentTest(UserJson user, BufferedImage expected) throws IOException, InterruptedException {
-        Selenide.open(LoginPage.URL, LoginPage.class)
+    @ScreenShotTest(value = "img/expected-stat.png")
+    void checkStatComponentTest(@Nonnull UserJson user, BufferedImage expected) throws IOException, InterruptedException {
+       Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())
-                .submit(new MainPage());
-
-        BufferedImage actual = ImageIO.read($("canvas[role='img']").screenshot());
-
-        assertTrue(new ScreenDiffResult(
-                actual,
-                expected
-        ), "Screen comparison failure");
+                .submit(new MainPage())
+                .checkStatImg(expected)
+                        .checkStatCell("Обучение 79990 ₽");
     }
 
     @User(
+            spendings = @Spending(
+                    category = "Обучение",
+                    description = "Обучение Advanced 2.0",
+                    amount = 79990
+            )
+    )
+    @ScreenShotTest(value = "img/clear-stat.png",rewriteExpected = true)
+    void deleteSpendingTest(@Nonnull UserJson user, BufferedImage clearStat) throws IOException {
+        Selenide.open(LoginPage.URL, LoginPage.class)
+                .fillLoginPage(user.username(), user.testData().password())
+                .submit(new MainPage())
+                .getSpendingTable()
+                .deleteSpending("Обучение Advanced 2.0")
+                .checkTableSize(0);
+
+        new MainPage().checkStatImg(clearStat)
+                .checkStatCell("");
+    }
+        @User(
             spendings = @Spending(
                     category = "Обучение",
                     description = "Обучение Advanced 2.0",
@@ -131,20 +147,20 @@ public class SpendingWebTest {
                 .checkFormErrorMessage("Amount has to be not less then 0.01");
     }
 
-    @User(
-            spendings = @Spending(
-                    category = "Обучение",
-                    description = "Обучение Advanced 2.0",
-                    amount = 79990
-            )
-    )
-    @Test
-    void deleteSpendingTest(UserJson user) {
-        Selenide.open(LoginPage.URL, LoginPage.class)
-                .fillLoginPage(user.username(), user.testData().password())
-                .submit(new MainPage())
-                .getSpendingTable()
-                .deleteSpending("Обучение Advanced 2.0")
-                .checkTableSize(0);
-    }
+//    @User(
+//            spendings = @Spending(
+//                    category = "Обучение",
+//                    description = "Обучение Advanced 2.0",
+//                    amount = 79990
+//            )
+//    )
+//    @Test
+//    void deleteSpendingTest(UserJson user) {
+//        Selenide.open(LoginPage.URL, LoginPage.class)
+//                .fillLoginPage(user.username(), user.testData().password())
+//                .submit(new MainPage())
+//                .getSpendingTable()
+//                .deleteSpending("Обучение Advanced 2.0")
+//                .checkTableSize(0);
+//    }
 }
