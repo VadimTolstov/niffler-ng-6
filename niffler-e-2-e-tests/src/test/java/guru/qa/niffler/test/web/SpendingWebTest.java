@@ -1,6 +1,7 @@
 package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
+import guru.qa.niffler.condition.Color;
 import guru.qa.niffler.jupiter.annotation.DisabledByIssue;
 import guru.qa.niffler.jupiter.annotation.ScreenShotTest;
 import guru.qa.niffler.jupiter.annotation.Spending;
@@ -21,6 +22,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -45,12 +47,21 @@ public class SpendingWebTest {
             )
     )
     @ScreenShotTest(value = "img/expected-stat.png")
-    void checkStatComponentTest(@Nonnull UserJson user, BufferedImage expected) throws IOException, InterruptedException {
-       Selenide.open(LoginPage.URL, LoginPage.class)
+    void checkStatComponentTest(@Nonnull UserJson user, BufferedImage expected) throws InterruptedException, IOException {
+        StatComponent statComponent = Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())
                 .submit(new MainPage())
-                .checkStatImg(expected)
-                        .checkStatCell("Обучение 79990 ₽");
+                .getStatComponent();
+//                .checkStatImg(expected)
+//                        .checkStatCell("Обучение 79990 ₽");
+        Thread.sleep(3000);
+
+        assertFalse(new ScreenDiffResult(
+                        statComponent.chartScreenshot(), expected),
+                "Screen comparison failure"
+        );
+
+        statComponent.checkBubbles(Color.yellow);
     }
 
     @User(
