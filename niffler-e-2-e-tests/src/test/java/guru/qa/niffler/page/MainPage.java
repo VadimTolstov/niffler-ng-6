@@ -59,7 +59,7 @@ public class MainPage extends BasePage<MainPage> {
 
     @Step("Убедитесь, что статистическое изображение соответствует ожидаемому")
     public MainPage checkStatImg(BufferedImage expected) throws IOException {
-        sleep(3000);
+        sleep(4000);
         BufferedImage actual = ImageIO.read(Objects.requireNonNull(statImg.screenshot()));
         assertFalse(new ScreenDiffResult(
                         actual, expected),

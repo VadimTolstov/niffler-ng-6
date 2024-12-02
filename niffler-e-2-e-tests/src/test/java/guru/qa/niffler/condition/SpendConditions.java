@@ -20,7 +20,7 @@ import static com.codeborne.selenide.CheckResult.rejected;
 
 public class SpendConditions {
 
-    public WebElementsCondition spends(@NotNull SpendJson... expectedSpends) {
+    public static WebElementsCondition spends(@NotNull SpendJson... expectedSpends) {
         return new WebElementsCondition() {
             private final String spends = Arrays.stream(expectedSpends).map(
                             s -> "Category " + s.category().name() +
