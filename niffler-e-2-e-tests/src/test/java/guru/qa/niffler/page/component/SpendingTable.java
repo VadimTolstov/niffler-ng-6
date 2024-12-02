@@ -2,6 +2,8 @@ package guru.qa.niffler.page.component;
 
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
+import guru.qa.niffler.condition.SpendConditions;
+import guru.qa.niffler.model.SpendJson;
 import guru.qa.niffler.page.BasePage;
 import guru.qa.niffler.page.EditSpendingPage;
 import io.qameta.allure.Step;
@@ -91,5 +93,12 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
     @Nonnull
     public void titleIsVisible() {
         self.$("h2").shouldHave(text("History of Spendings"));
+    }
+
+    @Step("Убедитесь, что таблица расходов содержит {expectedSpends}")
+    @Nonnull
+    public SpendingTable checkSpends(SpendJson... expectedSpends) {
+        tableRows.should(SpendConditions.spends(expectedSpends));
+        return this;
     }
 }

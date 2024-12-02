@@ -46,6 +46,8 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
                 ImageIO.write(actual, "png", new File("src/test/resources/" + screenShotTest.value()));
             }
         }
+
+        if (throwable.getMessage().contains("Screen comparison failure")) {
             ScreenDif screenDif = new ScreenDif(
                     "data:image/png;base64," + encoder.encodeToString(imageToBytes(getExpected())),
                     "data:image/png;base64," + encoder.encodeToString(imageToBytes(getActual())),
@@ -57,7 +59,7 @@ public class ScreenShotTestExtension implements ParameterResolver, TestExecution
                     "application/vnd.allure.image.diff",
                     objectMapper.writeValueAsString(screenDif)
             );
-
+        }
         throw throwable;
     }
 
