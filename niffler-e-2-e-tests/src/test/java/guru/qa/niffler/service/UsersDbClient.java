@@ -12,6 +12,7 @@ import guru.qa.niffler.data.repository.impl.AuthUserRepositoryHibernate;
 import guru.qa.niffler.data.repository.impl.UserdataUserRepositoryHibernate;
 import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.UserJson;
+import io.qameta.allure.Step;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -36,6 +37,7 @@ public class UsersDbClient implements UsersClient {
     );
 
     @Override
+    @Step("Создаем юзера через UsersDbClient Hibernate")
     public UserJson createUser(String username, String password) {
         return xaTransactionTemplate.execute(() ->
                 UserJson.fromEntity((createNewUser(username, password)),
