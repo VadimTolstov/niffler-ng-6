@@ -1,11 +1,11 @@
 package guru.qa.niffler.api;
 
 import com.google.common.base.Stopwatch;
+import guru.qa.niffler.api.enums.Token;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.ThreadSafeCookiesStore;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.utils.RandomDataUtils;
 import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
@@ -19,7 +19,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static guru.qa.niffler.utils.RandomDataUtils.*;
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -35,14 +34,14 @@ public class UserDataApiClient extends RestClient implements UsersClient {
     }
 
     @Override
-    @Step("Создание нового пользователя с именем: {username}")
+    @Step("Создание пользователя: username = {username}, password = {password}")
     public @Nullable UserJson createUser(String username, String password) {
         // Запрос формы регистрации для получения CSRF токена
-        authApiClient.requestRegisterForm();
-        authApiClient.registerUser(username,
+        authApiClient.registerUser(
+                username,
                 password,
                 password,
-                ThreadSafeCookiesStore.INSTANCE.cookieValue("XSRF-TOKEN")
+                ThreadSafeCookiesStore.INSTANCE.cookieValue(Token.CSRF.getCookieName())
         );
 
         // Ожидание появления пользователя после регистрации
