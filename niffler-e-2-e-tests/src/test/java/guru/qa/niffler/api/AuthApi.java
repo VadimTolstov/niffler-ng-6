@@ -6,6 +6,25 @@ import retrofit2.http.*;
 
 public interface AuthApi {
 
+    /**
+     * Метод для получения Cookies перед регистрацией пользователя.
+     *
+     * @return Объект Call без тела ответа.
+     */
+    @GET("login")
+    Call<Void> getCookies();
+
+    /**
+     * Метод для запроса авторизации.
+     *
+     * @param responseType       Тип ответа (например, "code").
+     * @param clientId           Идентификатор клиента.
+     * @param scope              Области доступа.
+     * @param redirectUri        URI перенаправления.
+     * @param codeChallenge      Запрос на проверку кода.
+     * @param codChallengeMethod Метод проверки кода (например, "S256").
+     * @return Объект Call с телом ответа типа ResponseBody.
+     */
     @GET("/oauth2/authorize")
     Call<Void> authorize(
             @Query("response_type") String responseType,
@@ -16,6 +35,16 @@ public interface AuthApi {
             @Query("code_challenge_method") String codChallengeMethod
     );
 
+    /**
+     * Метод для запроса токена.
+     *
+     * @param code         Код авторизации.
+     * @param redirectUri  URI перенаправления.
+     * @param codeVerifier Верификатор кода.
+     * @param grantType    Тип предоставления (например, "authorization_code").
+     * @param clientId     Идентификатор клиента.
+     * @return Объект Call с телом ответа типа JsonNode.
+     */
     @POST("/oauth2/token")
     @FormUrlEncoded
     Call<JsonNode> token(
@@ -26,6 +55,14 @@ public interface AuthApi {
             @Field("client_id") String clientId
     );
 
+    /**
+     * Метод для выполнения входа в систему.
+     *
+     * @param username Имя пользователя.
+     * @param password Пароль.
+     * @param csrf     CSRF-токен.
+     * @return Объект Call без тела ответа.
+     */
     @POST("/login")
     @FormUrlEncoded
     Call<Void> login(
@@ -37,6 +74,15 @@ public interface AuthApi {
     @GET("/register")
     Call<Void> requestRegisterForm();
 
+    /**
+     * Метод для выполнения регистрации пользователя.
+     *
+     * @param username       Имя пользователя.
+     * @param password       Пароль.
+     * @param passwordSubmit Подтверждение пароля.
+     * @param csrf           CSRF-токен.
+     * @return Объект Call без тела ответа.
+     */
     @POST("/register")
     @FormUrlEncoded
     Call<Void> register(
