@@ -37,6 +37,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
     @Step("Создание пользователя: username = {username}, password = {password}")
     public @Nullable UserJson createUser(String username, String password) {
         // Запрос формы регистрации для получения CSRF токена
+        authApiClient.requestRegisterForm();
         authApiClient.registerUser(
                 username,
                 password,

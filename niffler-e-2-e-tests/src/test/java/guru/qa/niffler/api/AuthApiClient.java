@@ -45,6 +45,20 @@ public class AuthApiClient extends RestClient {
     }
 
     /**
+     * Метод для запроса формы регистрации для получения CSRF токена.
+     */
+    @Step("Запрос формы регистрации для получения CSRF токена")
+    public void requestRegisterForm() {
+        final Response<Void> response;
+        try {
+            response = authApi.requestRegisterForm().execute();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        Assertions.assertEquals(HttpStatus.SC_OK, response.code());
+    }
+
+    /**
      * Метод для входа в систему и получения токена.
      *
      * @param username Имя пользователя.
