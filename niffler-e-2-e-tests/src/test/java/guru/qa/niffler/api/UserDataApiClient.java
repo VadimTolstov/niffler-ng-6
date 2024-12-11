@@ -223,7 +223,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
                 UserJson newUser = addIncomeInvitations(targetUser, 1).get(0);
 
                 // Шаг 3: Принятие входящего приглашения в друзья
-                acceptInvitation(newUser.username(), targetUser.username());
+                acceptInvitation(targetUser.username(), newUser.username());
 
                 // Добавляем созданного друга в список
                 friends.add(newUser);

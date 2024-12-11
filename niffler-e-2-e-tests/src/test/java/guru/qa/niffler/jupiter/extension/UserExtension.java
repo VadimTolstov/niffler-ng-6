@@ -5,7 +5,6 @@ import guru.qa.niffler.jupiter.annotation.meta.User;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
-import guru.qa.niffler.service.UsersDbClient;
 import guru.qa.niffler.utils.RandomDataUtils;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
@@ -38,9 +37,9 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                                                 defaultPassword,
                                                 new ArrayList<>(),
                                                 new ArrayList<>(),
-                                                income.stream().map(UserJson::username).toList(),
-                                                outcome.stream().map(UserJson::username).toList(),
-                                                friends.stream().map(UserJson::username).toList()
+                                                income,
+                                                outcome,
+                                                friends
 
                                         )
                                 )
