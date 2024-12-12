@@ -7,6 +7,7 @@ import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Token;
 import guru.qa.niffler.service.ThreadSafeCookiesStore;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 import org.openqa.selenium.Cookie;
@@ -32,9 +33,12 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
     }
 
     @Override
-    public void beforeEach(ExtensionContext context) throws Exception {
+    public void beforeEach(@NotNull ExtensionContext context) throws Exception {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ApiLogin.class)
                 .ifPresent(apiLogin -> {
+                    if ("".equals(apiLogin.username()) || "".equals(apiLogin.password())) {
+
+                    }
                     final String token = authApiClient.singIn(apiLogin.username(), apiLogin.password());
                     setToken(token);
                     if (setupBrowser) {

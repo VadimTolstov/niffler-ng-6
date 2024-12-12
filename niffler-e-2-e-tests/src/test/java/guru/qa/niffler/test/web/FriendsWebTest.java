@@ -53,11 +53,11 @@ public class FriendsWebTest {
     }
 
     @User(
-            outcome = 1
+            income = 1
     )
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
-        final String outcome = user.testData().outcomeInvitationsUsernames()[0];
+        final String outcome = user.testData().incomeInvitationsUsernames()[0];
 
         Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())
@@ -68,11 +68,11 @@ public class FriendsWebTest {
     }
 
     @User(
-            income = 1
+            outcome = 1
     )
     @Test
     void shouldAcceptFriendRequest(UserJson user) {
-        final String income = user.testData().incomeInvitationsUsernames()[0];
+        final String income = user.testData().outcomeInvitationsUsernames()[0];
 
         Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())
@@ -84,11 +84,11 @@ public class FriendsWebTest {
     }
 
     @User(
-            income = 1
+            outcome = 1
     )
     @Test
     void shouldDeclineFriendRequest(UserJson user) {
-        final String income = user.testData().incomeInvitationsUsernames()[0];
+        final String income = user.testData().outcomeInvitationsUsernames()[0];
 
         Selenide.open(LoginPage.URL, LoginPage.class)
                 .fillLoginPage(user.username(), user.testData().password())

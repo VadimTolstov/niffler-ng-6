@@ -2,6 +2,7 @@ package guru.qa.niffler.api;
 
 import com.google.common.base.Stopwatch;
 import guru.qa.niffler.api.enums.TokenName;
+import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.ThreadSafeCookiesStore;
@@ -55,7 +56,10 @@ public class UserDataApiClient extends RestClient implements UsersClient {
                         .execute()
                         .body();
                 if (userJson != null || userJson.id() != null) {
-                    return userJson; // Пользователь найден, возвращаем
+                    // Пользователь найден, добавляем ему TestData и возвращаем
+                    return userJson.addTestData(
+                            new TestData(password)
+                    );
                 } else {
                     Thread.sleep(100); // Ожидаем перед следующей проверкой
                 }
@@ -117,7 +121,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
         final Response<UserJson> response;
         try {
             response = userDataApi
-                    .sendInvitation(username, targetUsername)
+                    .sendInvitation(targetUsername, username)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -131,7 +135,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
         final Response<UserJson> response;
         try {
             response = userDataApi
-                    .acceptInvitation(username, targetUsername)
+                    .acceptInvitation(targetUsername, username)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -175,6 +179,8 @@ public class UserDataApiClient extends RestClient implements UsersClient {
 
                 // Добавляем созданного пользователя в список
                 incomeUsers.add(newUser);
+                // Добавляем созданного пользователя в модель targetUser
+                targetUser.testData().income().add(newUser);
             }
         }
         return incomeUsers;
@@ -201,6 +207,8 @@ public class UserDataApiClient extends RestClient implements UsersClient {
 
                 // Добавляем созданного пользователя в список
                 incomeUsers.add(newUser);
+                // Добавляем созданного пользователя в модель targetUser
+                targetUser.testData().outcome().add(newUser);
             }
         }
         return incomeUsers;
@@ -227,6 +235,8 @@ public class UserDataApiClient extends RestClient implements UsersClient {
 
                 // Добавляем созданного друга в список
                 friends.add(newUser);
+                // Добавляем созданного друга в модель targetUser
+                targetUser.testData().friends().add(newUser);
             }
         }
         return friends;

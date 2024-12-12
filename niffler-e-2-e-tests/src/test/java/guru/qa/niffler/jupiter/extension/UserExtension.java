@@ -2,15 +2,14 @@ package guru.qa.niffler.jupiter.extension;
 
 import guru.qa.niffler.api.UserDataApiClient;
 import guru.qa.niffler.jupiter.annotation.meta.User;
-import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import guru.qa.niffler.utils.RandomDataUtils;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
@@ -32,17 +31,7 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
                         context.getStore(NAMESPACE).put(
                                 context.getUniqueId(),
-                                testUser.addTestData(
-                                        new TestData(
-                                                defaultPassword,
-                                                new ArrayList<>(),
-                                                new ArrayList<>(),
-                                                income,
-                                                outcome,
-                                                friends
-
-                                        )
-                                )
+                                testUser
                         );
                     }
                 });
@@ -55,6 +44,10 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     @Override
     public UserJson resolveParameter(ParameterContext parameterContext, @Nonnull ExtensionContext extensionContext) throws ParameterResolutionException {
+        return getUserJson(extensionContext);
+    }
+
+    public static UserJson getUserJson(@NotNull ExtensionContext extensionContext) {
         return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), UserJson.class);
     }
 }
