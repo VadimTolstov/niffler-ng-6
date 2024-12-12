@@ -20,31 +20,36 @@ public abstract class RestClient {
     protected final Retrofit retrofit;
 
     public RestClient(String baseUrl) {
-        this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, null);
+        this(baseUrl, false, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, new Interceptor[0]);
     }
 
     public RestClient(String baseUrl, boolean followRedirect) {
-        this(baseUrl, followRedirect, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, null);
+        this(baseUrl, followRedirect, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, new Interceptor[0]);
+
+    }
+
+    public RestClient(String baseUrl, boolean followRedirect, @Nullable Interceptor... interceptors) {
+        this(baseUrl, followRedirect, JacksonConverterFactory.create(), HttpLoggingInterceptor.Level.HEADERS, interceptors);
 
     }
 
     public RestClient(String baseUrl, HttpLoggingInterceptor.Level loggingLevel) {
-        this(baseUrl, false, JacksonConverterFactory.create(), loggingLevel, null);
+        this(baseUrl, false, JacksonConverterFactory.create(), loggingLevel, new Interceptor[0]);
 
     }
 
     public RestClient(String baseUrl, Converter.Factory converterFactory, HttpLoggingInterceptor.Level loggingLevel) {
-        this(baseUrl, false, converterFactory, loggingLevel, null);
+        this(baseUrl, false, converterFactory, loggingLevel, new Interceptor[0]);
 
     }
 
     public RestClient(String baseUrl, boolean followRedirect, HttpLoggingInterceptor.Level loggingLevel) {
-        this(baseUrl, followRedirect, JacksonConverterFactory.create(), loggingLevel, null);
+        this(baseUrl, followRedirect, JacksonConverterFactory.create(), loggingLevel, new Interceptor[0]);
 
     }
 
     public RestClient(String baseUrl, boolean followRedirect, Converter.Factory converterFactory, HttpLoggingInterceptor.Level loggingLevel) {
-        this(baseUrl, followRedirect, converterFactory, loggingLevel, null);
+        this(baseUrl, followRedirect, converterFactory, loggingLevel, new Interceptor[0]);
 
     }
 

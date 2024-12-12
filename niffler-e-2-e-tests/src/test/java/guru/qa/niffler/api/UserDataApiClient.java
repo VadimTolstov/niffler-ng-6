@@ -1,7 +1,7 @@
 package guru.qa.niffler.api;
 
 import com.google.common.base.Stopwatch;
-import guru.qa.niffler.api.enums.Token;
+import guru.qa.niffler.api.enums.TokenName;
 import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.ThreadSafeCookiesStore;
@@ -42,7 +42,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
                 username,
                 password,
                 password,
-                ThreadSafeCookiesStore.INSTANCE.cookieValue(Token.CSRF.getCookieName())
+                ThreadSafeCookiesStore.INSTANCE.cookieValue(TokenName.CSRF.getCookieName())
         );
 
         // Ожидание появления пользователя после регистрации

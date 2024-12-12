@@ -2,8 +2,8 @@ package guru.qa.niffler.api;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
-import guru.qa.niffler.api.core.interceptor.AuthorizedCodeInterceptor;
-import guru.qa.niffler.api.core.store.AuthCodeStore;
+import guru.qa.niffler.api.core.interceptor.CodeInterceptor;
+import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import guru.qa.niffler.service.RestClient;
 import guru.qa.niffler.service.ThreadSafeCookiesStore;
 import guru.qa.niffler.utils.OauthUtils;
@@ -12,14 +12,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.HttpStatus;
 import org.junit.jupiter.api.Assertions;
 import retrofit2.Response;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.io.IOException;
-import java.util.Objects;
 
-import static guru.qa.niffler.api.enums.Token.CSRF;
-import static okhttp3.logging.HttpLoggingInterceptor.Level.BODY;
+import static guru.qa.niffler.api.enums.TokenName.CSRF;
 
 @Slf4j
 @ParametersAreNonnullByDefault
@@ -37,9 +34,7 @@ public class AuthApiClient extends RestClient {
         super(
                 CFG.authUrl(),
                 true,
-                JacksonConverterFactory.create(),
-                BODY,
-                new AuthorizedCodeInterceptor()
+                new CodeInterceptor()
         );
         this.authApi = retrofit.create(AuthApi.class);
     }
@@ -68,7 +63,7 @@ public class AuthApiClient extends RestClient {
     @Step("Получения token пользователя username = {username}, password = {password}")
     public String singIn(String username, String password) {
         final String codeVerifier = OauthUtils.generateCodeVerifier();
-        ThreadSafeCookiesStore.INSTANCE.removeAll();
+//        ThreadSafeCookiesStore.INSTANCE.removeAll();
         log.info("Войдите в систему под: username = [{}], password = [{}]", username, password);
 
         authorize(OauthUtils.generateCodeChallange(codeVerifier));
@@ -149,9 +144,10 @@ public class AuthApiClient extends RestClient {
     private String token(String codeVerifier) {
         final Response<JsonNode> response;
         try {
-            var code = Objects.requireNonNull(AuthCodeStore.INSTANCE.getCode());
+ //               var code = Objects.requireNonNull(AuthCodeStore.INSTANCE.getCode());
             response = authApi.token(
-                    code,
+                            //   code,
+                    ApiLoginExtension.getCode(),
                     REDIRECT_URI,
                     codeVerifier,
                     GRANT_TYPE,
