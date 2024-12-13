@@ -6,6 +6,8 @@ import guru.qa.niffler.api.AuthApiClient;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Token;
+import guru.qa.niffler.model.TestData;
+import guru.qa.niffler.model.UserJson;
 import guru.qa.niffler.service.ThreadSafeCookiesStore;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.extension.*;
@@ -36,10 +38,32 @@ public class ApiLoginExtension implements BeforeEachCallback, ParameterResolver 
     public void beforeEach(@NotNull ExtensionContext context) throws Exception {
         AnnotationSupport.findAnnotation(context.getRequiredTestMethod(), ApiLogin.class)
                 .ifPresent(apiLogin -> {
-                    if ("".equals(apiLogin.username()) || "".equals(apiLogin.password())) {
 
+                    final UserJson userToLogin;
+                    final UserJson userFromUserExtension = UserExtension.getUserJson();
+                    if ("".equals(apiLogin.username()) || "".equals(apiLogin.password())) {
+                        if (userFromUserExtension == null) {
+                            throw new IllegalArgumentException("Если указана @ApiLogin то должна быть указана @User");
+                        }
+                        userToLogin = userFromUserExtension;
+                    } else {
+                        UserJson fakeUser = new UserJson(
+                                apiLogin.username(),
+                                new TestData(
+                                        apiLogin.password()
+                                )
+                        );
+                        if (userFromUserExtension != null) {
+                            throw new IllegalArgumentException("Если указали username and password то мы не должны генерировать юзера");
+                        }
+                        UserExtension.setUser(fakeUser);
+                        userToLogin = fakeUser;
                     }
-                    final String token = authApiClient.singIn(apiLogin.username(), apiLogin.password());
+
+                    final String token = authApiClient.singIn(
+                            userToLogin.username(),
+                            userToLogin.testData().password()
+                    );
                     setToken(token);
                     if (setupBrowser) {
                         Selenide.open(CFG.frontUrl());

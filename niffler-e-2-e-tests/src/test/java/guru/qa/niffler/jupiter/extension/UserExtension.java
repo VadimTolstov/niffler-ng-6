@@ -10,7 +10,6 @@ import org.junit.jupiter.api.extension.*;
 import org.junit.platform.commons.support.AnnotationSupport;
 
 import javax.annotation.Nonnull;
-import java.util.List;
 
 public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
@@ -25,17 +24,15 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
                     if ("".equals(userAnno.username())) {
                         final String username = RandomDataUtils.randomUsername();
                         UserJson testUser = usersClient.createUser(username, defaultPassword);
-                        List<UserJson> income = usersClient.addIncomeInvitations(testUser, userAnno.income());
-                        List<UserJson> outcome = usersClient.addOutcomeInvitations(testUser, userAnno.outcome());
-                        List<UserJson> friends = usersClient.addFriends(testUser, userAnno.friends());
+                        usersClient.addIncomeInvitations(testUser, userAnno.income());
+                        usersClient.addOutcomeInvitations(testUser, userAnno.outcome());
+                        usersClient.addFriends(testUser, userAnno.friends());
 
-                        context.getStore(NAMESPACE).put(
-                                context.getUniqueId(),
-                                testUser
-                        );
+                        setUser(testUser);
                     }
                 });
     }
+
 
     @Override
     public boolean supportsParameter(@Nonnull ParameterContext parameterContext, ExtensionContext extensionContext) throws ParameterResolutionException {
@@ -44,10 +41,19 @@ public class UserExtension implements BeforeEachCallback, ParameterResolver {
 
     @Override
     public UserJson resolveParameter(ParameterContext parameterContext, @Nonnull ExtensionContext extensionContext) throws ParameterResolutionException {
-        return getUserJson(extensionContext);
+        return getUserJson();
     }
 
-    public static UserJson getUserJson(@NotNull ExtensionContext extensionContext) {
-        return extensionContext.getStore(NAMESPACE).get(extensionContext.getUniqueId(), UserJson.class);
+    public static void setUser(@NotNull UserJson testUser) {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        context.getStore(NAMESPACE).put(
+                context.getUniqueId(),
+                testUser
+        );
+    }
+
+    public static UserJson getUserJson() {
+        final ExtensionContext context = TestMethodContextExtension.context();
+        return context.getStore(NAMESPACE).get(context.getUniqueId(), UserJson.class);
     }
 }
