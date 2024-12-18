@@ -1,11 +1,12 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
+import guru.qa.niffler.api.AuthApi;
 import guru.qa.niffler.api.core.interceptor.CodeInterceptor;
 import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
-import guru.qa.niffler.service.RestClient;
-import guru.qa.niffler.service.ThreadSafeCookiesStore;
+import guru.qa.niffler.api.core.RestClient;
+import guru.qa.niffler.api.core.ThreadSafeCookiesStore;
 import guru.qa.niffler.utils.OauthUtils;
 import io.qameta.allure.Step;
 import lombok.extern.slf4j.Slf4j;

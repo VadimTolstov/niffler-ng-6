@@ -1,7 +1,7 @@
-package guru.qa.niffler.test.web;
+package guru.qa.niffler.test.web.fake;
 
 
-import guru.qa.niffler.api.AuthApiClient;
+import guru.qa.niffler.service.impl.AuthApiClient;
 import guru.qa.niffler.config.Config;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
 import guru.qa.niffler.jupiter.annotation.Token;
