@@ -1,11 +1,12 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
 import com.google.common.base.Stopwatch;
+import guru.qa.niffler.api.UserDataApi;
+import guru.qa.niffler.api.core.RestClient;
+import guru.qa.niffler.api.core.ThreadSafeCookiesStore;
 import guru.qa.niffler.api.enums.TokenName;
 import guru.qa.niffler.model.TestData;
 import guru.qa.niffler.model.UserJson;
-import guru.qa.niffler.service.RestClient;
-import guru.qa.niffler.service.ThreadSafeCookiesStore;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
@@ -35,8 +37,9 @@ public class UserDataApiClient extends RestClient implements UsersClient {
     }
 
     @Override
+    @Nonnull
     @Step("Создание пользователя: username = {username}, password = {password}")
-    public @Nullable UserJson createUser(String username, String password) {
+    public UserJson createUser(String username, String password) {
         // Запрос формы регистрации для получения CSRF токена
         authApiClient.requestRegisterForm();
         authApiClient.registerUser(
@@ -71,9 +74,9 @@ public class UserDataApiClient extends RestClient implements UsersClient {
         throw new AssertionError("Пользователь не был найден в системе после истечения времени ожидания");
     }
 
-
+    @Nonnull
     @Step("Получение текущего пользователя по имени: {username}")
-    public @Nullable UserJson getCurrentUser(String username) {
+    public UserJson getCurrentUser(String username) {
         final Response<UserJson> response;
         try {
             response = userDataApi
@@ -83,7 +86,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return Objects.requireNonNull(response.body(), "Ответ API вернул null");
     }
 
     @Step("Получение списка пользователей по имени: {username}")
@@ -249,6 +252,21 @@ public class UserDataApiClient extends RestClient implements UsersClient {
             response = userDataApi
                     .removeFriend(username, searchQuery)
                     .execute();
+        } catch (IOException e) {
+            throw new AssertionError(e);
+        }
+        assertEquals(HttpStatus.SC_OK, response.code());
+        return response.body() != null
+                ? response.body()
+                : Collections.emptyList();
+    }
+
+    @Step("Получаем всех друзей по API")
+    @Nonnull
+    public List<UserJson> friends(@Nonnull String username, @Nullable String searchQuery) {
+        final Response<List<UserJson>> response;
+        try {
+            response = userDataApi.friends(username, searchQuery).execute();
         } catch (IOException e) {
             throw new AssertionError(e);
         }

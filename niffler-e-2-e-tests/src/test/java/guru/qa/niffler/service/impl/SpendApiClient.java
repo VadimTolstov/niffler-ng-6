@@ -1,16 +1,14 @@
-package guru.qa.niffler.api;
+package guru.qa.niffler.service.impl;
 
-import guru.qa.niffler.config.Config;
+import guru.qa.niffler.api.SpendApi;
 import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.model.CategoryJson;
 import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.service.RestClient;
+import guru.qa.niffler.api.core.RestClient;
 import guru.qa.niffler.service.SpendClient;
 import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -31,8 +29,9 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Override
+    @Nonnull
     @Step("Send POST(\"internal/spends/add\") to niffler-spend")
-    public @Nullable SpendJson createSpend(SpendJson spend) {
+    public SpendJson createSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi
@@ -46,7 +45,6 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Override
-
     public Optional<SpendJson> findSpendById(UUID id) {
         throw new UnsupportedOperationException("FindSpendById a spend is not supported by API");
     }
@@ -62,7 +60,7 @@ public class SpendApiClient extends RestClient implements SpendClient {
         final Response<Void> response;
         try {
             response = spendApi
-                    .deleteSpends(spend.username(), List.of(spend.id().toString()))
+                    .removeSpends(spend.username(), List.of(spend.id().toString()))
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -71,8 +69,9 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Override
+    @Nonnull
     @Step("Send PATCH(\"/internal/spends/edit\") to niffler-spend")
-    public @Nullable SpendJson updateSpend(SpendJson spend) {
+    public SpendJson updateSpend(SpendJson spend) {
         final Response<SpendJson> response;
         try {
             response = spendApi
@@ -82,7 +81,7 @@ public class SpendApiClient extends RestClient implements SpendClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return Objects.requireNonNull(response.body(), "Ответ API вернул null при обновления траты");
     }
 
 
@@ -101,14 +100,14 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Step("Send GET(\"/internal/spends/all\") to niffler-spend")
-    public @Nonnull List<SpendJson> getSpends(String username,
+    public @Nonnull List<SpendJson> getAllSpends(String username,
                                               @Nullable CurrencyValues filterCurrency,
                                               @Nullable Date from,
                                               @Nullable Date to) {
         final Response<List<SpendJson>> response;
         try {
             response = spendApi
-                    .getSpends(username, filterCurrency, from, to)
+                    .getAllSpends(username, filterCurrency, from, to)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -120,21 +119,22 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Step("Send DELETE(\"/internal/spends/remove\") to niffler-spend")
-    public void deleteSpends(String username, List<String> ids) {
+    public void removeSpends(String username, List<String> ids) {
         final Response<Void> response;
         try {
             response = spendApi
-                    .deleteSpends(username, ids)
+                    .removeSpends(username, ids)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        assertEquals(HttpStatus.SC_OK, response.code());
+        assertEquals(HttpStatus.SC_NO_CONTENT, response.code());
     }
 
     @Override
+    @Nonnull
     @Step("Send POST(\"/internal/categories/add\") to niffler-spend")
-    public @Nullable CategoryJson createCategory(CategoryJson category) {
+    public CategoryJson createCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi
@@ -148,8 +148,9 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Override
+    @Nonnull
     @Step("Send PATCH(\"/internal/categories/update\") to niffler-spend")
-    public @Nullable CategoryJson updateCategory(CategoryJson category) {
+    public  CategoryJson updateCategory(CategoryJson category) {
         final Response<CategoryJson> response;
         try {
             response = spendApi
@@ -159,7 +160,7 @@ public class SpendApiClient extends RestClient implements SpendClient {
             throw new AssertionError(e);
         }
         assertEquals(HttpStatus.SC_OK, response.code());
-        return response.body();
+        return Objects.requireNonNull(response.body(), "Ответ API вернул null при обновлении категории");
     }
 
     @Override
@@ -178,11 +179,11 @@ public class SpendApiClient extends RestClient implements SpendClient {
     }
 
     @Step("Send GET(\"/internal/categories/all\") to niffler-spend")
-    public @Nonnull List<CategoryJson> getCategories(String username, boolean excludeArchived) {
+    public @Nonnull List<CategoryJson> getAllCategories(String username, boolean excludeArchived) {
         final Response<List<CategoryJson>> response;
         try {
             response = spendApi
-                    .getCategories(username, excludeArchived)
+                    .getAllCategories(username, excludeArchived)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);

@@ -1,10 +1,10 @@
 package guru.qa.niffler.data.jpa;
 
 import guru.qa.niffler.data.tpl.DataSources;
-import guru.qa.niffler.data.tpl.JdbcConnectionHolder;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -15,6 +15,7 @@ public class EntityManagers {
 
     private static final Map<String, EntityManagerFactory> emfs = new ConcurrentHashMap<>();
 
+    @NotNull
     public static EntityManager em(String jdbcUrl) {
         return new ThreadSafeEntityManager(
                 emfs.computeIfAbsent(
