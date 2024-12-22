@@ -18,8 +18,17 @@ public record TestData(
         this(password, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
     }
 
-    public TestData(@Nonnull String password, List<CategoryJson> categories) {
+    public TestData(@Nonnull String password, @Nonnull List<CategoryJson> categories) {
         this(password, categories, new ArrayList<>(), new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
+    }
+
+    public TestData(@Nonnull String password, @Nonnull List<CategoryJson> categories, @Nonnull List<SpendJson> spendings, @Nonnull List<UserJson> income, @Nonnull List<UserJson> outcome, @Nonnull List<UserJson> friends) {
+        this.password = password;
+        this.categories = categories;
+        this.spendings = spendings;
+        this.income = income;
+        this.outcome = outcome;
+        this.friends = friends;
     }
 
     public @Nonnull String[] friendsUsernames() {
