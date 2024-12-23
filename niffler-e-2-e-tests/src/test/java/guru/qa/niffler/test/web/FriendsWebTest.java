@@ -2,9 +2,9 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.jupiter.annotation.ApiLogin;
-import guru.qa.niffler.jupiter.annotation.meta.User;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.FriendsPage;
 import guru.qa.niffler.page.PeoplePage;
 import org.junit.jupiter.api.Test;
@@ -43,24 +43,24 @@ public class FriendsWebTest {
     }
 
     @User(
-            income = 1
+            outcome = 1
     )
     @ApiLogin
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
-        final String outcome = user.testData().incomeInvitationsUsernames()[0];
+        final String outcome = user.testData().outcomeInvitationsUsernames()[0];
 
         Selenide.open(PeoplePage.URL, PeoplePage.class)
                 .checkInvitationSentToUser(outcome);
     }
 
     @User(
-            outcome = 1
+            income = 1
     )
     @ApiLogin
     @Test
     void shouldAcceptFriendRequest(UserJson user) {
-        final String income = user.testData().outcomeInvitationsUsernames()[0];
+        final String income = user.testData().incomeInvitationsUsernames()[0];
 
         Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .acceptFriendInvitationFromUser(income)
@@ -68,12 +68,12 @@ public class FriendsWebTest {
     }
 
     @User(
-            outcome = 1
+            income = 1
     )
     @ApiLogin
     @Test
     void shouldDeclineFriendRequest(UserJson user) {
-        final String income = user.testData().outcomeInvitationsUsernames()[0];
+        final String income = user.testData().incomeInvitationsUsernames()[0];
 
         Selenide.open(FriendsPage.URL, FriendsPage.class)
                 .declineFriendInvitationFromUser(income)

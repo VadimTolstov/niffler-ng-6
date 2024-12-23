@@ -3,8 +3,7 @@ package guru.qa.niffler.page.component;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.condition.SpendConditions;
-import guru.qa.niffler.model.SpendJson;
-import guru.qa.niffler.page.BasePage;
+import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.page.EditSpendingPage;
 import io.qameta.allure.Step;
 
@@ -15,7 +14,6 @@ import static com.codeborne.selenide.ClickOptions.usingJavaScript;
 import static com.codeborne.selenide.CollectionCondition.size;
 import static com.codeborne.selenide.Condition.text;
 import static com.codeborne.selenide.Condition.visible;
-import static com.codeborne.selenide.Selectors.byTagAndText;
 import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
@@ -39,7 +37,7 @@ public class SpendingTable extends BaseComponent<SpendingTable> {
 
     @Step("Выбрать период для отображения трат: {0}")
     @Nonnull
-    public SpendingTable selectPeriod(DataFilterValues period) {
+    public SpendingTable selectPeriod(DataFilterValuesComponent period) {
         periodMenu.click();
         menuItems.find(text(period.text)).click();
         return this;

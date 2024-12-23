@@ -2,6 +2,7 @@ package guru.qa.niffler.test.web;
 
 import com.codeborne.selenide.Selenide;
 import guru.qa.niffler.config.Config;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.RegisterPage;
@@ -18,6 +19,7 @@ public class RegistrationWebTest {
     private static final Config CFG = Config.getInstance();
 
     @Test
+    @User
     @DisplayName("Регистрация нового пользователя")
     void successRegistration() {
         String name = randomUsername();
@@ -34,6 +36,7 @@ public class RegistrationWebTest {
     }
 
     @Test
+    @User
     @DisplayName("Регистрация пользователя с логином и паролем из одного символа")
     void validationLoginPassword() {
         String errorName = "Allowed username length should be from 3 to 50 characters";
@@ -49,6 +52,7 @@ public class RegistrationWebTest {
 
 
     @Test
+    @User
     @DisplayName("Проверить что страница регистрации загружается")
     void checkingHeader() {
 
@@ -59,6 +63,7 @@ public class RegistrationWebTest {
 
 
     @Test
+    @User
     @DisplayName("Регистрация пользователя с зарегистрированным логином")
     void mainPageShouldBeDisplayedAfterSuccessLogin() {
         String username = "books";

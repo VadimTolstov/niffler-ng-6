@@ -5,8 +5,8 @@ import guru.qa.niffler.api.UserDataApi;
 import guru.qa.niffler.api.core.RestClient;
 import guru.qa.niffler.api.core.ThreadSafeCookiesStore;
 import guru.qa.niffler.api.enums.TokenName;
-import guru.qa.niffler.model.TestData;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.rest.TestData;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
 import org.apache.hc.core5.http.HttpStatus;
@@ -27,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ParametersAreNonnullByDefault
 public class UserDataApiClient extends RestClient implements UsersClient {
+    private static final String defaultPassword = "12345";
 
     private final UserDataApi userDataApi;
     private final AuthApiClient authApiClient = new AuthApiClient();
@@ -124,7 +125,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
         final Response<UserJson> response;
         try {
             response = userDataApi
-                    .sendInvitation(targetUsername, username)
+                    .sendInvitation(username, targetUsername)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -138,7 +139,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
         final Response<UserJson> response;
         try {
             response = userDataApi
-                    .acceptInvitation(targetUsername, username)
+                    .acceptInvitation(username, targetUsername)
                     .execute();
         } catch (IOException e) {
             throw new AssertionError(e);
@@ -175,10 +176,10 @@ public class UserDataApiClient extends RestClient implements UsersClient {
 
             for (int i = 0; i < count; i++) {
                 // Шаг 2: Создание рандомного пользователя
-                UserJson newUser = createUser(randomUsername(), "12345");
+                UserJson newUser = createUser(randomUsername(), defaultPassword);
 
                 // Шаг 3: Отправка приглашения в друзья
-                sendInvitation(newUser.username(), user.username());
+                sendInvitation(newUser.username(), targetUser.username());
 
                 // Добавляем созданного пользователя в список
                 incomeUsers.add(newUser);
@@ -206,7 +207,7 @@ public class UserDataApiClient extends RestClient implements UsersClient {
                 UserJson newUser = createUser(randomUsername(), "12345");
 
                 // Шаг 3: Отправка приглашения в друзья
-                sendInvitation(user.username(), newUser.username());
+                sendInvitation(targetUser.username(), newUser.username());
 
                 // Добавляем созданного пользователя в список
                 incomeUsers.add(newUser);
@@ -230,10 +231,12 @@ public class UserDataApiClient extends RestClient implements UsersClient {
             }
 
             for (int i = 0; i < count; i++) {
-                // Шаг 2: Отправка входящего приглашения в друзья
-                UserJson newUser = addIncomeInvitations(targetUser, 1).get(0);
+                //создаем нового юзера
+                UserJson newUser = createUser(randomUsername(), defaultPassword);
 
-                // Шаг 3: Принятие входящего приглашения в друзья
+                //отправляем приглушения в друзья
+                sendInvitation(newUser.username(), targetUser.username());
+                //принимаем приглушения
                 acceptInvitation(targetUser.username(), newUser.username());
 
                 // Добавляем созданного друга в список

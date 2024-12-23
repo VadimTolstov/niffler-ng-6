@@ -3,7 +3,7 @@ package guru.qa.niffler.page;
 import com.codeborne.selenide.ElementsCollection;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.data.entity.userdata.CurrencyValues;
-import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.rest.SpendJson;
 import guru.qa.niffler.page.component.Calendar;
 import guru.qa.niffler.page.component.SelectField;
 import io.qameta.allure.Step;

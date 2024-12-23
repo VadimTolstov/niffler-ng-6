@@ -1,8 +1,8 @@
 package guru.qa.niffler.test.web.order;
 
 import guru.qa.niffler.service.impl.UserDataApiClient;
-import guru.qa.niffler.jupiter.annotation.meta.User;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.jupiter.annotation.User;
+import guru.qa.niffler.model.rest.UserJson;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

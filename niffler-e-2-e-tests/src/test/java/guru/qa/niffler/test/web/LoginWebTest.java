@@ -4,9 +4,9 @@ import com.codeborne.selenide.Selenide;
 import com.github.javafaker.Faker;
 import guru.qa.niffler.jupiter.annotation.Category;
 import guru.qa.niffler.jupiter.annotation.Spending;
-import guru.qa.niffler.jupiter.annotation.meta.User;
+import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.jupiter.annotation.meta.WebTest;
-import guru.qa.niffler.model.UserJson;
+import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.page.LoginPage;
 import guru.qa.niffler.page.MainPage;
 import org.junit.jupiter.api.DisplayName;
@@ -17,6 +17,7 @@ public class LoginWebTest {
     private static final String ERROR_MESSAGE = "Неверные учетные данные пользователя";
 
     @Test
+    @User
     @DisplayName("Авторизация пользователя с невалидными данными")
     void unsuccessfulAuthorization() {
         Selenide.open(LoginPage.URL, LoginPage.class)
@@ -27,6 +28,8 @@ public class LoginWebTest {
     }
 
     @Test
+    @User
+
     @DisplayName("Показать пароль")
     void openPassword() {
         String password = new Faker().code().ean8();
