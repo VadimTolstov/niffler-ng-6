@@ -65,6 +65,7 @@ sourceSets {
 }
 
 dependencies {
+    implementation group: 'com.google.code.gson', name: 'gson', version: '2.11.0'
     // Logs
     testImplementation "ch.qos.logback:logback-classic:${logbackVersion}"
     testImplementation "org.slf4j:slf4j-api:${slf4jVersion}"
