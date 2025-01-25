@@ -14,12 +14,14 @@ import guru.qa.niffler.data.tpl.XaTransactionTemplate;
 import guru.qa.niffler.model.rest.UserJson;
 import guru.qa.niffler.service.UsersClient;
 import io.qameta.allure.Step;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static guru.qa.niffler.utils.RandomDataUtils.randomUsername;
 
@@ -37,14 +39,15 @@ public class UsersDbClient implements UsersClient {
             CFG.userdataJdbcUrl()
     );
 
+    @NotNull
     @Override
     @Step("Создаем юзера через UsersDbClient Hibernate")
-    public UserJson createUser(String username, String password) {
-        return xaTransactionTemplate.execute(() ->
+    public UserJson createUser(@NotNull String username, @NotNull String password) {
+        return Objects.requireNonNull(xaTransactionTemplate.execute(() ->
                 UserJson.fromEntity((createNewUser(username, password)),
                         null
                 )
-        );
+        ));
     }
 
     private UserEntity createNewUser(String username, String password) {
@@ -109,9 +112,9 @@ public class UsersDbClient implements UsersClient {
                 xaTransactionTemplate.execute(() -> {
                             final String username = randomUsername();
                             final UserEntity user = createNewUser(username, "12345");
-                            userdataUserRepository.addFriend(user, targetEntity);
+                            userdataUserRepository.addFriend(targetEntity,user );
                             users.add(UserJson.fromEntity(user, null));
-                            return null;
+                            return user;
                         }
                 );
             }

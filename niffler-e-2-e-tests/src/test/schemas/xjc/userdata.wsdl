@@ -130,7 +130,7 @@
                     <xs:element name="currency" type="tns:currency"/>
                     <xs:element maxOccurs="1" minOccurs="0" name="photo" type="xs:string"/>
                     <xs:element maxOccurs="1" minOccurs="0" name="photoSmall" type="xs:string"/>
-                    <xs:element maxOccurs="1" minOccurs="0" name="friendState" type="tns:friendState"/>
+                    <xs:element maxOccurs="1" minOccurs="0" name="friendState" type="tns:friendshipStatus"/>
                 </xs:sequence>
             </xs:complexType>
 

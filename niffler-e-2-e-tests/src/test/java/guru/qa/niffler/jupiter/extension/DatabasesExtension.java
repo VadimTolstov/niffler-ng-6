@@ -1,11 +1,7 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.config.Config;
 import guru.qa.niffler.data.jpa.EntityManagers;
 import guru.qa.niffler.data.tpl.Connections;
-import guru.qa.niffler.data.tpl.DataSources;
-import org.junit.jupiter.api.extension.ExtensionContext;
-import org.springframework.jdbc.core.JdbcTemplate;
 
 public class DatabasesExtension implements SuiteExtension {
 
@@ -19,6 +15,7 @@ public class DatabasesExtension implements SuiteExtension {
 //        //очистить все таблицы перед началом тестов
 //        clearDatabaseTables();
 //    }
+
 
     @Override
     public void afterSuite() {
