@@ -7,7 +7,7 @@ import guru.qa.niffler.api.core.interceptor.CodeInterceptor;
 import guru.qa.niffler.jupiter.extension.ApiLoginExtension;
 import guru.qa.niffler.api.core.RestClient;
 import guru.qa.niffler.api.core.ThreadSafeCookiesStore;
-import guru.qa.niffler.utils.OauthUtils;
+import guru.qa.niffler.utils.OAuthUtils;
 import io.qameta.allure.Step;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.hc.core5.http.HttpStatus;
@@ -63,11 +63,11 @@ public class AuthApiClient extends RestClient {
      */
     @Step("Получения token пользователя username = {username}, password = {password}")
     public String singIn(String username, String password) {
-        final String codeVerifier = OauthUtils.generateCodeVerifier();
+        final String codeVerifier = OAuthUtils.generateCodeVerifier();
 //        ThreadSafeCookiesStore.INSTANCE.removeAll();
         log.info("Войдите в систему под: username = [{}], password = [{}]", username, password);
 
-        authorize(OauthUtils.generateCodeChallange(codeVerifier));
+        authorize(OAuthUtils.generateCodeChallange(codeVerifier));
         login(username, password);
         return token(codeVerifier);
     }
