@@ -25,7 +25,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CategoryServiceTest {
+class StatServiceTest {
   private static final long MAX_CATEGORIES_SIZE = 7;
 
   @Test
