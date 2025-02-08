@@ -19,44 +19,44 @@ import org.springframework.stereotype.Controller;
 @PreAuthorize("isAuthenticated()")
 public class UserMutationController {
 
-    private final UserDataClient userDataClient;
-    private final RestSpendClient restSpendClient;
+  private final UserDataClient userDataClient;
+  private final RestSpendClient restSpendClient;
 
-    @Autowired
-    public UserMutationController(UserDataClient userDataClient, RestSpendClient restSpendClient) {
-        this.userDataClient = userDataClient;
-        this.restSpendClient = restSpendClient;
-    }
+  @Autowired
+  public UserMutationController(UserDataClient userDataClient, RestSpendClient restSpendClient) {
+    this.userDataClient = userDataClient;
+    this.restSpendClient = restSpendClient;
+  }
 
-    @MutationMapping
-    public UserGql friendship(@AuthenticationPrincipal Jwt principal,
-                              @Argument FriendshipGqlInput input) {
-        String username = principal.getClaim("sub");
-        return switch (input.action()) {
-            case ADD -> UserGql.fromUserJson(userDataClient.sendInvitation(username, input.username()));
-            case ACCEPT -> UserGql.fromUserJson(userDataClient.acceptInvitation(username, input.username()));
-            case REJECT -> UserGql.fromUserJson(userDataClient.declineInvitation(username, input.username()));
-            case DELETE -> {
-                userDataClient.removeFriend(username, input.username());
-                yield UserGql.fromUserJson(userDataClient.currentUser(username));
-            }
-        };
-    }
+  @MutationMapping
+  public UserGql friendship(@AuthenticationPrincipal Jwt principal,
+                            @Argument FriendshipGqlInput input) {
+    String username = principal.getClaim("sub");
+    return switch (input.action()) {
+      case ADD -> UserGql.fromUserJson(userDataClient.sendInvitation(username, input.username()));
+      case ACCEPT -> UserGql.fromUserJson(userDataClient.acceptInvitation(username, input.username()));
+      case REJECT -> UserGql.fromUserJson(userDataClient.declineInvitation(username, input.username()));
+      case DELETE -> {
+        userDataClient.removeFriend(username, input.username());
+        yield UserGql.fromUserJson(userDataClient.currentUser(username));
+      }
+    };
+  }
 
-    @MutationMapping
-    public UserGql user(@AuthenticationPrincipal Jwt principal,
-                        @Argument @Valid UserGqlInput input) {
-        String username = principal.getClaim("sub");
-        return UserGql.fromUserJson(userDataClient.updateUserInfo(new UserJson(
-                null,
-                username,
-                null,
-                null,
-                input.fullname(),
-                null,
-                input.photo(),
-                null,
-                null
-        )));
-    }
+  @MutationMapping
+  public UserGql user(@AuthenticationPrincipal Jwt principal,
+                      @Argument @Valid UserGqlInput input) {
+    String username = principal.getClaim("sub");
+    return UserGql.fromUserJson(userDataClient.updateUserInfo(new UserJson(
+        null,
+        username,
+        null,
+        null,
+        input.fullname(),
+        null,
+        input.photo(),
+        null,
+        null
+    )));
+  }
 }

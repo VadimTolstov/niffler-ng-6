@@ -19,11 +19,11 @@ public class GraphQlExceptionResolver extends DataFetcherExceptionResolverAdapte
   protected GraphQLError resolveToSingleError(@Nonnull Throwable ex, @Nonnull DataFetchingEnvironment env) {
     if (ex instanceof TooManySubQueriesException || ex instanceof IllegalGqlFieldAccessException) {
       return GraphqlErrorBuilder.newError()
-              .errorType(ErrorType.BAD_REQUEST)
-              .message(ex.getMessage())
-              .path(env.getExecutionStepInfo().getPath())
-              .location(env.getField().getSourceLocation())
-              .build();
+          .errorType(ErrorType.BAD_REQUEST)
+          .message(ex.getMessage())
+          .path(env.getExecutionStepInfo().getPath())
+          .location(env.getField().getSourceLocation())
+          .build();
     } else {
       return super.resolveToSingleError(ex, env);
     }

@@ -42,10 +42,10 @@ public class CategoriesController {
                                   @Valid @RequestBody CategoryJson category) {
     String username = principal.getClaim("sub");
     return restSpendClient.addCategory(new CategoryJson(
-            category.id(),
-            category.name(),
-            username,
-            category.archived()
+        category.id(),
+        category.name(),
+        username,
+        category.archived()
     ));
   }
 
@@ -54,10 +54,10 @@ public class CategoriesController {
                                      @RequestBody CategoryJson category) {
     String username = principal.getClaim("sub");
     return restSpendClient.updateCategory(new CategoryJson(
-            category.id(),
-            category.name(),
-            username,
-            category.archived()
+        category.id(),
+        category.name(),
+        username,
+        category.archived()
     ));
   }
 }

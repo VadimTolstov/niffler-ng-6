@@ -10,29 +10,29 @@ import java.util.List;
 import java.util.UUID;
 
 public record UserGql(
-        UUID id,
-        String username,
-        String fullname,
-        CurrencyValues currency,
-        String photo,
-        String photoSmall,
-        FriendshipStatus friendshipStatus,
-        List<CategoryJson> categories,
-        Slice<UserGql> friends,
-        Slice<UserGql> allPeople) {
+    UUID id,
+    String username,
+    String fullname,
+    CurrencyValues currency,
+    String photo,
+    String photoSmall,
+    FriendshipStatus friendshipStatus,
+    List<CategoryJson> categories,
+    Slice<UserGql> friends,
+    Slice<UserGql> allPeople) {
 
-    public static UserGql fromUserJson(UserJson userJson) {
-        return new UserGql(
-                userJson.id(),
-                userJson.username(),
-                userJson.fullname(),
-                userJson.currency(),
-                userJson.photo(),
-                userJson.photoSmall(),
-                userJson.friendshipStatus(),
-                null,
-                null,
-                null
-        );
-    }
+  public static UserGql fromUserJson(UserJson userJson) {
+    return new UserGql(
+        userJson.id(),
+        userJson.username(),
+        userJson.fullname(),
+        userJson.currency(),
+        userJson.photo(),
+        userJson.photoSmall(),
+        userJson.friendshipStatus(),
+        null,
+        null,
+        null
+    );
+  }
 }

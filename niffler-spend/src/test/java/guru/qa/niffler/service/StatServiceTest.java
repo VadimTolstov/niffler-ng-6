@@ -1,226 +1,234 @@
 package guru.qa.niffler.service;
 
 import guru.qa.niffler.data.CategoryEntity;
-import guru.qa.niffler.data.repository.CategoryRepository;
-import guru.qa.niffler.ex.CategoryNotFoundException;
-import guru.qa.niffler.ex.InvalidCategoryNameException;
-import guru.qa.niffler.ex.TooManyCategoriesException;
+import guru.qa.niffler.data.SpendEntity;
 import guru.qa.niffler.model.CategoryJson;
-import org.junit.jupiter.api.Assertions;
+import guru.qa.niffler.model.CurrencyValues;
+import guru.qa.niffler.model.SpendJson;
+import guru.qa.niffler.model.StatisticJson;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.Map;
+import java.util.stream.Stream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.lenient;
 
 @ExtendWith(MockitoExtension.class)
 class StatServiceTest {
-  private static final long MAX_CATEGORIES_SIZE = 7;
+
+  private StatService statService;
+
+  private final CurrencyValues userCurrency = CurrencyValues.USD;
+
+  private SpendEntity firstSpend, secondSpend, thirdSpend;
+  private CategoryEntity firstCategory, secondCategory, thirdCategory;
+
+  @BeforeEach
+  void setUp(@Mock SpendService spendService,
+             @Mock CategoryService categoryService,
+             @Mock GrpcCurrencyClient grpcCurrencyClient) {
+    firstCategory = new CategoryEntity();
+    firstCategory.setName("Бар");
+    firstCategory.setUsername("dima");
+    secondCategory = new CategoryEntity();
+    secondCategory.setName("Магазин");
+    secondCategory.setUsername("dima");
+    thirdCategory = new CategoryEntity();
+    thirdCategory.setName("Рыбалка");
+    thirdCategory.setUsername("dima");
+
+    firstSpend = new SpendEntity();
+    firstSpend.setCategory(firstCategory);
+    firstSpend.setAmount(750.0);
+    firstSpend.setDescription("Коктейль двойной дайкири");
+    firstSpend.setCurrency(CurrencyValues.RUB);
+    firstSpend.setSpendDate(addDaysToDate(new Date(), Calendar.DAY_OF_WEEK, -3));
+
+    secondSpend = new SpendEntity();
+    secondSpend.setCategory(firstCategory);
+    secondSpend.setAmount(600.0);
+    secondSpend.setDescription("Бокал пива");
+    secondSpend.setCurrency(CurrencyValues.RUB);
+    secondSpend.setSpendDate(addDaysToDate(new Date(), Calendar.DAY_OF_WEEK, -1));
+
+    thirdSpend = new SpendEntity();
+    thirdSpend.setCategory(thirdCategory);
+    thirdSpend.setAmount(12000.0);
+    thirdSpend.setDescription("Спининг");
+    thirdSpend.setCurrency(CurrencyValues.RUB);
+    thirdSpend.setSpendDate(addDaysToDate(new Date(), Calendar.DAY_OF_WEEK, -2));
+
+    lenient().when(spendService.getSpendsEntityForUser(eq("dima"), any(CurrencyValues.class), isNull(), any(Date.class)))
+        .thenReturn(List.of(
+            firstSpend, secondSpend, thirdSpend
+        ));
+
+    lenient().when(spendService.getSpendsEntityForUser(eq("dima"), any(CurrencyValues.class), any(Date.class), any(Date.class)))
+        .thenReturn(List.of(
+            secondSpend, thirdSpend
+        ));
+
+    lenient().when(categoryService.getAllCategories(eq("dima"), eq(false)))
+        .thenReturn(Stream.of(
+            firstCategory, secondCategory, thirdCategory
+        ).map(CategoryJson::fromEntity).toList());
+
+    lenient().when(grpcCurrencyClient.calculate(any(Double.class), eq(CurrencyValues.RUB), eq(CurrencyValues.USD)))
+        .thenAnswer(a -> BigDecimal.valueOf((double) a.getArguments()[0] / 75.0));
+
+    statService = new StatService(spendService, categoryService, grpcCurrencyClient);
+  }
 
   @Test
-  void categoryNotFoundExceptionShouldBeThrown(@Mock CategoryRepository categoryRepository) {
-    final String username = "not_found";
-    final UUID id = UUID.randomUUID();
+  void getStatisticTest() {
+    List<StatisticJson> result = statService.getStatistic("dima", userCurrency, null, null, null);
+    assertEquals(4, result.size());
+  }
 
-    when(categoryRepository.findByUsernameAndId(eq(username), eq(id)))
-            .thenReturn(Optional.empty());
-
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    CategoryJson categoryJson = new CategoryJson(
-            id,
-            "",
-            username,
-            true
-    );
-
-    CategoryNotFoundException ex = Assertions.assertThrows(
-            CategoryNotFoundException.class,
-            () -> categoryService.update(categoryJson)
-    );
-    Assertions.assertEquals(
-            "Can`t find category by id: '" + id + "'",
-            ex.getMessage()
+  static Stream<Arguments> resolveDesiredCurrenciesInStatisticTest() {
+    return Stream.of(
+        Arguments.of(null, CurrencyValues.values()),
+        Arguments.of(CurrencyValues.KZT, new CurrencyValues[]{CurrencyValues.KZT}),
+        Arguments.of(CurrencyValues.USD, new CurrencyValues[]{CurrencyValues.USD})
     );
   }
 
-  @ValueSource(strings = {"Archived", "ARCHIVED", "ArchIved"})
+  @MethodSource
   @ParameterizedTest
-  void categoryNameArchivedShouldBeDenied(String catName, @Mock CategoryRepository categoryRepository) {
-    final String username = "duck";
-    final UUID id = UUID.randomUUID();
-    final CategoryEntity cat = new CategoryEntity();
-
-    when(categoryRepository.findByUsernameAndId(eq(username), eq(id)))
-            .thenReturn(Optional.of(
-                    cat
-            ));
-
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    CategoryJson categoryJson = new CategoryJson(
-            id,
-            catName,
-            username,
-            true
-    );
-
-    InvalidCategoryNameException ex = Assertions.assertThrows(
-            InvalidCategoryNameException.class,
-            () -> categoryService.update(categoryJson)
-    );
-    Assertions.assertEquals(
-            "Can`t add category with name: '" + catName + "'",
-            ex.getMessage()
-    );
+  void resolveDesiredCurrenciesInStatisticTest(CurrencyValues tested, CurrencyValues[] expected) {
+    CurrencyValues[] currencyValues = statService.resolveDesiredCurrenciesInStatistic(tested);
+    assertArrayEquals(expected, currencyValues);
   }
 
   @Test
-  void onlyTwoFieldsShouldBeUpdated(@Mock CategoryRepository categoryRepository) {
-    final String username = "duck";
-    final UUID id = UUID.randomUUID();
-    final CategoryEntity cat = new CategoryEntity();
-    cat.setId(id);
-    cat.setUsername(username);
-    cat.setName("Магазины");
-    cat.setArchived(false);
-
-    when(categoryRepository.findByUsernameAndId(eq(username), eq(id)))
-            .thenReturn(Optional.of(
-                    cat
-            ));
-    when(categoryRepository.save(any(CategoryEntity.class)))
-            .thenAnswer(invocation -> invocation.getArgument(0));
-
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    CategoryJson categoryJson = new CategoryJson(
-            id,
-            "Бары",
-            username,
-            true
-    );
-
-    categoryService.update(categoryJson);
-    ArgumentCaptor<CategoryEntity> argumentCaptor = ArgumentCaptor.forClass(CategoryEntity.class);
-    verify(categoryRepository).save(argumentCaptor.capture());
-    assertEquals("Бары", argumentCaptor.getValue().getName());
-    assertEquals("duck", argumentCaptor.getValue().getUsername());
-    assertTrue(argumentCaptor.getValue().isArchived());
-    assertEquals(id, argumentCaptor.getValue().getId());
-  }
-  @Test
-  void getAllCategoriesShouldReturnAllCategoriesIncludingArchived(@Mock CategoryRepository categoryRepository) {
-    String username = "testUser";
-    List<CategoryEntity> categories = List.of(
-            new CategoryEntity(UUID.randomUUID(), "Category1", username, false),
-            new CategoryEntity(UUID.randomUUID(), "Category2", username, true)
-    );
-
-    when(categoryRepository.findAllByUsernameOrderByName(username)).thenReturn(categories);
-
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    List<CategoryJson> result = categoryService.getAllCategories(username, false);
-
-    assertNotNull(result);
-    assertEquals(2, result.size());
-    verify(categoryRepository, times(1)).findAllByUsernameOrderByName(username);
+  void createDefaultStatisticJsonTest() {
+    Date dateTo = new Date();
+    StatisticJson defaultStatisticJson = statService.createDefaultStatisticJson(CurrencyValues.KZT, userCurrency, dateTo);
+    assertEquals(dateTo, defaultStatisticJson.dateTo());
+    assertEquals(CurrencyValues.KZT, defaultStatisticJson.currency());
+    assertEquals(userCurrency, defaultStatisticJson.userDefaultCurrency());
+    assertEquals(0.0, defaultStatisticJson.total());
+    assertEquals(0.0, defaultStatisticJson.totalInUserDefaultCurrency());
+    assertNull(defaultStatisticJson.dateFrom());
+    assertEquals(0, defaultStatisticJson.categoryStatistics().size());
   }
 
   @Test
-  void getAllCategoriesShouldReturnOnlyNonArchivedCategories(@Mock CategoryRepository categoryRepository) {
-    String username = "testUser";
-    List<CategoryEntity> categories = List.of(
-            new CategoryEntity(UUID.randomUUID(), "Category1", username, false),
-            new CategoryEntity(UUID.randomUUID(), "Category2", username, true)
-    );
+  void enrichStatisticDateFromByFirstStreamElementTest() {
+    Date dateTo = new Date();
+    StatisticJson defaultStatisticJson = statService.createDefaultStatisticJson(CurrencyValues.KZT, userCurrency, dateTo);
 
-    when(categoryRepository.findAllByUsernameOrderByName(username)).thenReturn(categories);
+    for (SpendEntity spend : Stream.of(secondSpend, firstSpend, thirdSpend)
+        .sorted(Comparator.comparing(SpendEntity::getSpendDate))
+        .toList()) {
+      defaultStatisticJson = statService.enrichStatisticDateFromByFirstStreamElement(
+          defaultStatisticJson
+      ).apply(spend);
+    }
 
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    List<CategoryJson> result = categoryService.getAllCategories(username, true);
-
-    assertNotNull(result);
-    assertEquals(1, result.size());
-    assertFalse(result.get(0).archived());
-    verify(categoryRepository, times(1)).findAllByUsernameOrderByName(username);
+    assertEquals(firstSpend.getSpendDate(), defaultStatisticJson.dateFrom());
   }
 
   @Test
-  void updateShouldUpdateCategorySuccessfully(@Mock CategoryRepository categoryRepository) {
-    String username = "testUser";
-    UUID categoryId = UUID.randomUUID();
-    CategoryEntity categoryEntity = new CategoryEntity(categoryId, "Category1", username, false);
+  void enrichStatisticTotalAmountByAllStreamElementsTest() {
+    Date dateTo = new Date();
+    StatisticJson defaultStatisticJson = statService.createDefaultStatisticJson(CurrencyValues.KZT, userCurrency, dateTo);
 
-    when(categoryRepository.findByUsernameAndId(username, categoryId)).thenReturn(Optional.of(categoryEntity));
-    when(categoryRepository.save(any(CategoryEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    for (SpendEntity spend : Stream.of(secondSpend, firstSpend, thirdSpend)
+        .sorted(Comparator.comparing(SpendEntity::getSpendDate))
+        .toList()) {
+      defaultStatisticJson = statService.enrichStatisticTotalAmountByAllStreamElements(
+          defaultStatisticJson
+      ).apply(spend);
+    }
 
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    CategoryJson categoryJson = new CategoryJson(categoryId, "UpdatedCategory", username, false);
-
-    CategoryJson result = categoryService.update(categoryJson);
-
-    assertNotNull(result);
-    assertEquals("UpdatedCategory", result.name());
-    verify(categoryRepository, times(1)).findByUsernameAndId(username, categoryId);
-    verify(categoryRepository, times(1)).save(any(CategoryEntity.class));
+    assertEquals(13350.0, defaultStatisticJson.total());
   }
 
   @Test
-  void saveShouldThrowTooManyCategoriesExceptionWhenExceedingLimit(@Mock CategoryRepository categoryRepository) {
-    String username = "testUser";
-    String categoryName = "NewCategory";
+  void enrichStatisticTotalInUserCurrencyByAllStreamElementsSameCurrencyTest() {
+    Date dateTo = new Date();
+    CurrencyValues statisticCurrency = CurrencyValues.RUB;
+    CurrencyValues userCurrency = CurrencyValues.RUB;
+    StatisticJson defaultStatisticJson = statService.createDefaultStatisticJson(statisticCurrency, userCurrency, dateTo);
 
-    when(categoryRepository.countByUsernameAndArchived(username, false)).thenReturn(MAX_CATEGORIES_SIZE + 1);
+    for (SpendEntity spend : Stream.of(secondSpend, firstSpend, thirdSpend)
+        .sorted(Comparator.comparing(SpendEntity::getSpendDate))
+        .toList()) {
+      defaultStatisticJson =
+          statService.enrichStatisticTotalInUserCurrencyByAllStreamElements(
+                  statService.enrichStatisticTotalAmountByAllStreamElements(defaultStatisticJson)
+                      .apply(spend), statisticCurrency, userCurrency)
+              .apply(spend);
+    }
 
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    CategoryJson categoryJson = new CategoryJson(null, categoryName, username, false);
-
-    TooManyCategoriesException exception = assertThrows(TooManyCategoriesException.class, () -> {
-      categoryService.save(categoryJson);
-    });
-
-    assertEquals("Can`t add over than 8 categories for user: '" + username + "'", exception.getMessage());
-    verify(categoryRepository, times(1)).countByUsernameAndArchived(username, false);
-    verify(categoryRepository, never()).save(any(CategoryEntity.class));
+    assertEquals(13350.0, defaultStatisticJson.total());
+    assertEquals(13350.0, defaultStatisticJson.totalInUserDefaultCurrency());
   }
 
   @Test
-  void saveShouldSaveCategorySuccessfully(@Mock CategoryRepository categoryRepository) {
-    String username = "testUser";
-    String categoryName = "NewCategory";
+  void enrichStatisticTotalInUserCurrencyByAllStreamElementsDifferentCurrencyTest() {
+    Date dateTo = new Date();
+    CurrencyValues statisticCurrency = CurrencyValues.RUB;
+    CurrencyValues userCurrency = CurrencyValues.USD;
+    StatisticJson defaultStatisticJson = statService.createDefaultStatisticJson(statisticCurrency, userCurrency, dateTo);
 
-    when(categoryRepository.countByUsernameAndArchived(username, false)).thenReturn(MAX_CATEGORIES_SIZE - 1);
-    when(categoryRepository.save(any(CategoryEntity.class))).thenAnswer(invocation -> invocation.getArgument(0));
-
-    CategoryService categoryService = new CategoryService(categoryRepository);
-
-    CategoryJson categoryJson = new CategoryJson(null, categoryName, username, false);
-
-    CategoryEntity result = categoryService.save(categoryJson);
-
-    assertNotNull(result);
-    assertEquals(categoryName, result.getName());
-    assertEquals(username, result.getUsername());
-    assertFalse(result.isArchived());
-    verify(categoryRepository, times(1)).countByUsernameAndArchived(username, false);
-    verify(categoryRepository, times(1)).save(any(CategoryEntity.class));
+    for (SpendEntity spend : Stream.of(secondSpend, firstSpend, thirdSpend)
+        .sorted(Comparator.comparing(SpendEntity::getSpendDate))
+        .toList()) {
+      defaultStatisticJson =
+          statService.enrichStatisticTotalInUserCurrencyByAllStreamElements(
+                  statService.enrichStatisticTotalAmountByAllStreamElements(defaultStatisticJson)
+                      .apply(spend), statisticCurrency, userCurrency)
+              .apply(spend);
+    }
+    assertEquals(13350.0, defaultStatisticJson.total());
+    assertEquals(178.0, defaultStatisticJson.totalInUserDefaultCurrency());
   }
 
+  @Test
+  void bindSpendsToCategoriesTest() {
+    CurrencyValues statisticCurrency = CurrencyValues.RUB;
 
+    List<SpendEntity> sortedSpends = Stream.of(secondSpend, firstSpend, thirdSpend)
+        .filter(se -> se.getCurrency() == statisticCurrency)
+        .sorted(Comparator.comparing(SpendEntity::getSpendDate))
+        .toList();
+
+    Map<String, List<SpendJson>> map = statService.bindSpendsToCategories(sortedSpends);
+
+    assertEquals(2, map.size());
+    assertNotNull(map.get("Бар"));
+    assertNotNull(map.get("Рыбалка"));
+    List<SpendJson> barSpends = map.get("Бар");
+    List<SpendJson> fishCatchSpends = map.get("Рыбалка");
+    assertEquals(2, barSpends.size());
+    assertEquals(1, fishCatchSpends.size());
+  }
+
+  private Date addDaysToDate(Date date, int selector, int days) {
+    Calendar cal = Calendar.getInstance();
+    cal.setTime(date);
+    cal.add(selector, days);
+    return cal.getTime();
+  }
 }

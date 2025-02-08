@@ -6,7 +6,7 @@ buildscript {
         allureVersion = '2.29.0'
         selenideVersion = '7.4.2'
         retrofitVersion = '2.11.0'
-        okhttp3Version = '3.14.9'
+        okhttp3Version = '4.11.0'
         logbackVersion = '1.4.11'
         slf4jVersion = '2.0.9'
         springJdbcVersion = '6.1.12'
@@ -34,7 +34,7 @@ plugins {
     id 'io.qameta.allure' version '2.12.0'
     id 'io.qameta.allure-adapter' version '2.12.0'
     id 'com.github.edeandrea.xjc-generation' version '1.6'
-    id 'com.apollographql.apollo' version '4.1.1'
+    id 'com.apollographql.apollo' version '4.1.0'
 }
 
 group = 'guru.qa'
@@ -53,7 +53,7 @@ xjcGeneration {
     schemas {
         wsdlSchema {
             schemaFile = 'userdata.wsdl'
-            javaPackageName = 'jaxb.userdata'
+            javaPackageName = 'guru.qa.jaxb.userdata'
             sourceSet = 'test'
         }
     }
@@ -160,6 +160,10 @@ tasks.register('printVersion') {
     doLast {
         println project.version
     }
+}
+
+tasks.named { it == "generateNifflerApolloSources" }.configureEach {
+    dependsOn("downloadNifflerApolloSchemaFromIntrospection")
 }
 
 test {

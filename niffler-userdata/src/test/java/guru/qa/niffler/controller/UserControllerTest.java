@@ -20,21 +20,21 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 class UserControllerTest {
 
-    @Autowired
-    private MockMvc mockMvc;
+  @Autowired
+  private MockMvc mockMvc;
 
-    @Sql(scripts = "/currentUserShouldBeReturned.sql")
-    @Test
-    void currentUserShouldBeReturned() throws Exception {
-        mockMvc.perform(get("/internal/users/current")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .param("username", "dima")
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("dima"))
-                .andExpect(jsonPath("$.fullname").value("Dmitrii Tuchs"))
-                .andExpect(jsonPath("$.currency").value("RUB"))
-                .andExpect(jsonPath("$.photo").isNotEmpty())
-                .andExpect(jsonPath("$.photoSmall").isNotEmpty());
-    }
+  @Sql(scripts = "/currentUserShouldBeReturned.sql")
+  @Test
+  void currentUserShouldBeReturned() throws Exception {
+    mockMvc.perform(get("/internal/users/current")
+            .contentType(MediaType.APPLICATION_JSON)
+            .param("username", "dima")
+        )
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.username").value("dima"))
+        .andExpect(jsonPath("$.fullname").value("Dmitrii Tuchs"))
+        .andExpect(jsonPath("$.currency").value("RUB"))
+        .andExpect(jsonPath("$.photo").isNotEmpty())
+        .andExpect(jsonPath("$.photoSmall").isNotEmpty());
+  }
 }

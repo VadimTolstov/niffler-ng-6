@@ -16,24 +16,24 @@ import org.springframework.stereotype.Controller;
 @PreAuthorize("isAuthenticated()")
 public class StatQueryController {
 
-    private final StatisticAggregator statisticAggregator;
+  private final StatisticAggregator statisticAggregator;
 
-    @Autowired
-    public StatQueryController(StatisticAggregator statisticAggregator) {
-        this.statisticAggregator = statisticAggregator;
-    }
+  @Autowired
+  public StatQueryController(StatisticAggregator statisticAggregator) {
+    this.statisticAggregator = statisticAggregator;
+  }
 
-    @QueryMapping
-    public StatisticV2Json stat(@AuthenticationPrincipal Jwt principal,
-                                @Argument CurrencyValues statCurrency,
-                                @Argument CurrencyValues filterCurrency,
-                                @Argument DataFilterValues filterPeriod) {
-        String username = principal.getClaim("sub");
-        return statisticAggregator.enrichStatisticRequestV2(
-                username,
-                statCurrency,
-                filterCurrency,
-                filterPeriod
-        );
-    }
+  @QueryMapping
+  public StatisticV2Json stat(@AuthenticationPrincipal Jwt principal,
+                              @Argument CurrencyValues statCurrency,
+                              @Argument CurrencyValues filterCurrency,
+                              @Argument DataFilterValues filterPeriod) {
+    String username = principal.getClaim("sub");
+    return statisticAggregator.enrichStatisticRequestV2(
+        username,
+        statCurrency,
+        filterCurrency,
+        filterPeriod
+    );
+  }
 }

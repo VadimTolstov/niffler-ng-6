@@ -23,44 +23,44 @@ import java.util.List;
 @PreAuthorize("isAuthenticated()")
 public class SpendQueryController {
 
-    private final RestSpendClient restSpendClient;
-    private final GrpcCurrencyClient grpcCurrencyClient;
+  private final RestSpendClient restSpendClient;
+  private final GrpcCurrencyClient grpcCurrencyClient;
 
-    @Autowired
-    public SpendQueryController(RestSpendClient restSpendClient, GrpcCurrencyClient grpcCurrencyClient) {
-        this.restSpendClient = restSpendClient;
-        this.grpcCurrencyClient = grpcCurrencyClient;
-    }
+  @Autowired
+  public SpendQueryController(RestSpendClient restSpendClient, GrpcCurrencyClient grpcCurrencyClient) {
+    this.restSpendClient = restSpendClient;
+    this.grpcCurrencyClient = grpcCurrencyClient;
+  }
 
-    @QueryMapping
-    public Slice<SpendJson> spends(@AuthenticationPrincipal Jwt principal,
-                                   @Argument int page,
-                                   @Argument int size,
-                                   @Argument @Nullable List<String> sort,
-                                   @Argument @Nullable String searchQuery,
-                                   @Argument @Nullable DataFilterValues filterPeriod,
-                                   @Argument @Nullable CurrencyValues filterCurrency) {
-        return restSpendClient.getSpends(
-                principal.getClaim("sub"),
-                new GqlQueryPaginationAndSort(page, size, sort).pageable(),
-                filterPeriod,
-                filterCurrency,
-                searchQuery
-        );
-    }
+  @QueryMapping
+  public Slice<SpendJson> spends(@AuthenticationPrincipal Jwt principal,
+                                 @Argument int page,
+                                 @Argument int size,
+                                 @Argument @Nullable List<String> sort,
+                                 @Argument @Nullable String searchQuery,
+                                 @Argument @Nullable DataFilterValues filterPeriod,
+                                 @Argument @Nullable CurrencyValues filterCurrency) {
+    return restSpendClient.getSpends(
+        principal.getClaim("sub"),
+        new GqlQueryPaginationAndSort(page, size, sort).pageable(),
+        filterPeriod,
+        filterCurrency,
+        searchQuery
+    );
+  }
 
-    @QueryMapping
-    public SpendJson spend(@AuthenticationPrincipal Jwt principal,
-                           @Argument String id) {
-        final String username = principal.getClaim("sub");
-        return restSpendClient.getSpend(
-                id,
-                username
-        );
-    }
+  @QueryMapping
+  public SpendJson spend(@AuthenticationPrincipal Jwt principal,
+                         @Argument String id) {
+    final String username = principal.getClaim("sub");
+    return restSpendClient.getSpend(
+        id,
+        username
+    );
+  }
 
-    @QueryMapping
-    public List<CurrencyJson> currencies() {
-        return grpcCurrencyClient.getAllCurrencies();
-    }
+  @QueryMapping
+  public List<CurrencyJson> currencies() {
+    return grpcCurrencyClient.getAllCurrencies();
+  }
 }
