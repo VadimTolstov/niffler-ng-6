@@ -21,6 +21,7 @@ buildscript {
         wiremockVersion = '3.0.1'
         fakerVersion = '1.0.2'
         ashotVersion = '1.5.4'
+        apollographqlVersion = '0.0.2'
         userdataWsdlUrl = System.getProperty("test.env") == "docker"
                 ? "http://userdata.niffler.dc:8089/ws/userdata.wsdl"
                 : "http://127.0.0.1:8089/ws/userdata.wsdl"
@@ -100,6 +101,10 @@ dependencies {
     testImplementation "com.squareup.okhttp3:logging-interceptor:${okhttp3Version}"
     testImplementation "com.squareup.okhttp3:okhttp-urlconnection:${okhttp3Version}"
     testImplementation "org.springframework.data:spring-data-commons:${springDataCommonsVersion}"
+    // GraphQL
+    testImplementation "com.apollographql.java:client:${apollographqlVersion}"
+    testImplementation "com.apollographql.java:rx2:${apollographqlVersion}"
+    testImplementation 'com.apollographql.adapters:apollo-adapters-core:0.0.4'
     // DB
     testImplementation "org.springframework:spring-jdbc:${springJdbcVersion}"
     testImplementation "org.postgresql:postgresql:${project.ext.postgresDriverVersion}"
