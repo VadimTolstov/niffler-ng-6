@@ -1,6 +1,5 @@
 package guru.qa.niffler.jupiter.extension;
 
-import guru.qa.niffler.data.entity.userdata.CurrencyValues;
 import guru.qa.niffler.jupiter.annotation.Spending;
 import guru.qa.niffler.jupiter.annotation.User;
 import guru.qa.niffler.model.rest.CategoryJson;
@@ -44,7 +43,7 @@ public class SpendingExtension implements BeforeEachCallback, ParameterResolver 
                                                         user != null ? user.username() : userAnno.username(),
                                                         false
                                                 ),
-                                                CurrencyValues.RUB,
+                                                spendAnno.currency(),
                                                 spendAnno.amount(),
                                                 spendAnno.description(),
                                                 user != null ? user.username() : userAnno.username()
