@@ -6,6 +6,7 @@ import com.codeborne.selenide.Selectors;
 import com.codeborne.selenide.SelenideElement;
 import guru.qa.niffler.page.component.SearchField;
 import io.qameta.allure.Step;
+import lombok.Getter;
 import org.openqa.selenium.By;
 
 import javax.annotation.Nonnull;
@@ -21,7 +22,7 @@ import static com.codeborne.selenide.Selectors.byText;
 import static com.codeborne.selenide.Selenide.*;
 
 @ParametersAreNonnullByDefault
-public class PeoplePage {
+public class PeoplePage extends BasePage<PeoplePage> {
 
     private final SelenideElement friendsTable = $("#friends");
     private final SelenideElement tabPanelFriends = $("#simple-tabpanel-friends");
@@ -31,7 +32,8 @@ public class PeoplePage {
     private final SelenideElement declineButton = $(byText("Decline"));
     private final SelenideElement modalDialog = $("div[role='dialog']");
 
-    private final SearchField searchField = new SearchField();
+//    @Getter
+    private final SearchField<PeoplePage> searchField = new SearchField<>($("input[placeholder='Search']"), this);
 
 //    public void checkNotIncoming() {
 //        incomeSpan.filterBy(Condition.text("Waiting...")).should(size(0));

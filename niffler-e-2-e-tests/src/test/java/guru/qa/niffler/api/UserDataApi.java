@@ -6,10 +6,7 @@ import retrofit2.http.*;
 
 import java.util.List;
 
-public interface UserApi {
-
-    @POST("/register")
-    Call<UserJson> registerUser(@Body UserJson user);
+public interface UserDataApi {
 
     @GET("/internal/users/current")
     Call<UserJson> getCurrentUser(@Query("username") String username);

@@ -39,7 +39,7 @@ public class GhApiClient extends RestClient {
         } catch (IOException e) {
             throw new AssertionError(e);
         }
-        assertEquals(HttpStatus.SC_CREATED, response.code());
+        assertEquals(HttpStatus.SC_OK, response.code());
         return Objects.requireNonNull(response.body()).get("state").asText();
     }
 }

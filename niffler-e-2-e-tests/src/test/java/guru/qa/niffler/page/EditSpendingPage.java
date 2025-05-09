@@ -10,9 +10,9 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import static com.codeborne.selenide.Selenide.$;
 
 @ParametersAreNonnullByDefault
-public class EditSpendingPage {
+public class EditSpendingPage extends BasePage<EditSpendingPage> {
     @Getter
-    private final Calendar calendar = new Calendar();
+    private final Calendar<EditSpendingPage> calendar = new Calendar<>($("input[name='date']"), this);
     private final SelenideElement descriptionInput = $("#description");
     private final SelenideElement saveBtn = $("#save");
     private final SelenideElement amountInput = $("#amount");
@@ -25,8 +25,9 @@ public class EditSpendingPage {
     }
 
     @Step("Сохранить изменения")
-    public void save() {
+    public EditSpendingPage save() {
         saveBtn.click();
+        return this;
     }
 
     @Step("Ввести название категории: {category}")

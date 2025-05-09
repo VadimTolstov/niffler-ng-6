@@ -10,15 +10,12 @@ import org.junit.jupiter.api.Test;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.StaticUser;
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.Type.*;
-import static guru.qa.niffler.jupiter.extension.UsersQueueExtension.UserType;
-
 @WebTest
 @ParametersAreNonnullByDefault
 public class FriendsWebTest {
 
     private static final Config CFG = Config.getInstance();
+
     @User(friends = 1)
     @Test
     void friendShouldBePresentInFriendsTable(UserJson user) {
@@ -47,6 +44,9 @@ public class FriendsWebTest {
                 .verifyFriendTableContainsIncome(user.testData().income());
     }
 
+    @User(
+            income = 1
+    )
     @Test
     void outcomeInvitationBePresentInAllPeoplesTable(UserJson user) {
         Selenide.open(CFG.frontUrl(), LoginPage.class)

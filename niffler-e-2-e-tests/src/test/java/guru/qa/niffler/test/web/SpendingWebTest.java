@@ -35,10 +35,10 @@ public class SpendingWebTest {
                     amount = 79990
             )
     )
-    @DisabledByIssue("3")
+    @DisabledByIssue("2")
     @Test
     void categoryDescriptionShouldBeChangedFromTable(SpendJson spend) {
-        final String newDescription = "Обучение Niffler Next Generation";
+        final String newDescription = "Обучение Niffler Next Generation1";
 
         Selenide.open(CFG.frontUrl(), LoginPage.class)
                 .login(spend.username(), "12345")
@@ -65,6 +65,26 @@ public class SpendingWebTest {
                 .getCalendar()
                 .selectDateInCalendar(LocalDate.now());
         new EditSpendingPage().save();
+        new MainPage().checkThatTableContainsSpending(description);
+    }
+
+    @User
+    @Test
+    void addSpendAndCheckAlertTest(UserJson user) {
+        String category = randomCategoryName();
+        String description = randomSentence(2);
+
+        Selenide.open(CFG.frontUrl(), LoginPage.class)
+                .login(user.username(), user.testData().password())
+                .getHeader()
+                .addSpendingPage()
+                .setSpendingCategory(category)
+                .setNewSpendingDescription(description)
+                .setSpendingAmount("10")
+                .getCalendar()
+                .selectDateInCalendar(LocalDate.now())
+                .save()
+                .checkAlert("New spending is successfully created");
         new MainPage().checkThatTableContainsSpending(description);
     }
 }
